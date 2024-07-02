@@ -2,6 +2,8 @@
 import HelloWorld from "./components/HelloWorld.vue";
 import { loadOml2d } from "oh-my-live2d";
 import { reactive, onMounted } from "vue";
+// import axios from "axios";
+
 loadOml2d({
   models: [
     {
