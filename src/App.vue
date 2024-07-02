@@ -1,5 +1,58 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from "./components/HelloWorld.vue";
+import { loadOml2d } from "oh-my-live2d";
+import { reactive, onMounted } from "vue";
+loadOml2d({
+  models: [
+    {
+      path: "https://model.oml2d.com/Senko_Normals/senko.model3.json",
+      position: [-10, 20],
+    },
+  ],
+  statusBar: {
+    loadingIcon: "icon-loading",
+  },
+  menus: {
+    items: [
+      // {
+      //   id: "Rest",
+      //   icon: "icon-rest",
+      //   title: "休息",
+      //   onClick(oml2d) {
+      //     // actions ...
+      //   },
+      // },
+      // {
+      //   id: "SwitchModel",
+      //   icon: "icon-switch",
+      //   title: "切换模型",
+      //   onClick(oml2d) {
+      //     // actions ...
+      //   },
+      // },
+      {
+        id: "About",
+        icon: "icon-about",
+        title: "gtihub",
+        onClick() {
+          window.open("https://github.com/s6091214/live2d");
+        },
+      },
+    ],
+  },
+});
+const data = reactive({ content: null });
+
+onMounted(() => {
+  fetch("https://memes.tw/wtf/api")
+    .then((res) => res.json())
+    .then((json) => {
+      data.content = json;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
 </script>
 
 <template>
