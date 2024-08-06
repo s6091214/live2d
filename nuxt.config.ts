@@ -15,6 +15,10 @@ export default defineNuxtConfig({
           property: "og:description",
           content: "MEMES, SNS, Post, COMMENTS, LIKE and COLLECT",
         },
+        {
+          name: 'google-site-verification',
+          content: '9SF0DnY0VkwDUx0m43hTCwoEDRdIhlaDiW8IhREz6xw'
+        }
       ],
     },
   },
@@ -43,7 +47,7 @@ export default defineNuxtConfig({
       });
     },
   },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", '@element-plus/nuxt'],
   imports: {
     dirs: ["stores"],
   },

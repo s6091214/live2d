@@ -10,10 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "element-plus": "^2.7.8",
     "nuxt": "^3.12.4",
     "vue": "latest"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.9",
     "@pinia/nuxt": "^0.5.2",
     "autoprefixer": "^10.4.20",
     "pinia": "^2.2.0",
