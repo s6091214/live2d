@@ -39,6 +39,33 @@
             <!-- 下方文章資訊及流言區塊 -->
             <div>
               <!-- TODO: 操作 -->
+              <div class="flex pb-[4px]">
+                <div>
+                  <span
+                    class="p-[0.5rem] inline-block cursor-pointer"
+                    @click="pressLike(content.id)"
+                  >
+                    <img
+                      class="w-[24px] h-[24px]"
+                      :class="{
+                        grayscale: !isLike(content.id),
+                      }"
+                      src="/heart-like-con.svg"
+                      alt=""
+                    />
+                  </span>
+                  <span
+                    class="p-[0.5rem] inline-block cursor-pointer"
+                    @click="() => {}"
+                  >
+                    <img
+                      class="w-[24px] h-[24px] invert"
+                      src="/comment-icon.svg"
+                      alt=""
+                    />
+                  </span>
+                </div>
+              </div>
               <!-- TODO: 按讚列表 -->
               <!-- TODO: tags -->
               <div class="flex gap-2 pt-[0.5rem]" v-if="content.tags">
@@ -69,7 +96,19 @@
 import { useCookie } from "#imports";
 import deviceName from "../util/mobileDetective";
 
-const cookie = useCookie("live2dInit");
+const initialStore = useInitialStore();
+const { handleSignDialog, addAlert } = initialStore;
+
+const cookieLive2d = useCookie("live2dInit");
+
+const cookieNickname = useCookie("nickname");
+
+const cookieLikeIdList = useCookie("likeIdList");
+
+const isLogin = computed(() => {
+  const nickname = cookieNickname?.value || "";
+  return nickname && nickname !== "";
+});
 
 declare global {
   interface Window {
@@ -78,6 +117,35 @@ declare global {
 }
 
 let memeList = ref([]);
+
+let likeIdList: number[] = reactive([]);
+
+const isLike = (id: number) => {
+  if (id) {
+    return likeIdList.includes(id);
+  }
+  return false;
+};
+
+const handleLike = (id: number) => {
+  if (id) {
+    const liked = isLike(id);
+    if (liked) likeIdList = likeIdList.filter((item) => item !== id);
+    else likeIdList.push(id);
+    cookieLikeIdList.value = JSON.stringify(likeIdList);
+  }
+};
+
+const pressLike = (id) => {
+  if (!isLogin.value) {
+    addAlert({ type: "error", msg: "請先創建暱稱" });
+    handleSignDialog(true);
+    return;
+  }
+  if (id) {
+    handleLike(id);
+  }
+};
 
 /** 看板娘初始化 */
 const live2dInit = () => {
@@ -130,8 +198,8 @@ const live2dInit = () => {
 const live2dHandler = () => {
   const OML2D = window.OML2D;
   if (!OML2D) {
-    if (!cookie?.value) {
-      cookie.value = "true";
+    if (!cookieLive2d?.value) {
+      cookieLive2d.value = "true";
       setTimeout(() => {
         live2dHandler();
       }, 1000);
@@ -156,11 +224,32 @@ if (deviceName === "unknown") {
 }
 
 onMounted(() => {
+  if (cookieLikeIdList?.value) {
+    try {
+      likeIdList = JSON.parse(cookieLikeIdList.value);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   fetch("https://memes.tw/wtf/api")
     .then((res) => res.json())
     .then((json) => {
       if (json && json.length) {
-        memeList.value = json.map((content) => {
+        const filterString = ["免費救援"];
+        const filterArray = json.filter((content) => {
+          let show = true;
+          const title = content.title;
+          for (const string of filterString) {
+            if (title.includes(string)) {
+              show = false;
+              break;
+            }
+          }
+          return show;
+        });
+        // console.log(filterArray);
+        memeList.value = filterArray.map((content) => {
           const meme = {
             ...content,
             tags: content.hashtag
