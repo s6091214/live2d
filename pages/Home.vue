@@ -99,16 +99,11 @@ import deviceName from "../util/mobileDetective";
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
 
+const userStore = useUserStore();
+const { savaLikeIdList } = userStore;
+const { isLogin, likeIdList } = storeToRefs(userStore);
+
 const cookieLive2d = useCookie("live2dInit");
-
-const cookieNickname = useCookie("nickname");
-
-const cookieLikeIdList = useCookie("likeIdList");
-
-const isLogin = computed(() => {
-  const nickname = cookieNickname?.value || "";
-  return nickname && nickname !== "";
-});
 
 declare global {
   interface Window {
@@ -118,11 +113,9 @@ declare global {
 
 let memeList = ref([]);
 
-let likeIdList: number[] = reactive([]);
-
 const isLike = (id: number) => {
   if (id) {
-    return likeIdList.includes(id);
+    return likeIdList.value.includes(id);
   }
   return false;
 };
@@ -130,9 +123,12 @@ const isLike = (id: number) => {
 const handleLike = (id: number) => {
   if (id) {
     const liked = isLike(id);
-    if (liked) likeIdList = likeIdList.filter((item) => item !== id);
-    else likeIdList.push(id);
-    cookieLikeIdList.value = JSON.stringify(likeIdList);
+    if (liked) {
+      const filterArray = likeIdList.value.filter((item) => item !== id);
+      savaLikeIdList(filterArray);
+    } else {
+      savaLikeIdList(id);
+    }
   }
 };
 
@@ -224,14 +220,6 @@ if (deviceName === "unknown") {
 }
 
 onMounted(() => {
-  if (cookieLikeIdList?.value) {
-    try {
-      likeIdList = JSON.parse(cookieLikeIdList.value);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   fetch("https://memes.tw/wtf/api")
     .then((res) => res.json())
     .then((json) => {

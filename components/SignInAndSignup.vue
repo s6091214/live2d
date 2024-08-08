@@ -168,12 +168,9 @@
 <script setup>
 import deviceName from "../util/mobileDetective";
 
-const cookie = useCookie("nickname");
-
-const isLogin = computed(() => {
-  const nickname = cookie?.value || "";
-  return nickname && nickname !== "";
-});
+const userStore = useUserStore();
+const { setNickname } = userStore;
+const { isLogin } = storeToRefs(userStore);
 
 defineProps({
   signDialog: Boolean,
@@ -239,7 +236,7 @@ const onRegister = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      cookie.value = registerForm.nickname;
+      setNickname(registerForm.nickname);
       registerForm.nickname = "";
     } else {
       console.log("error submit!", fields);

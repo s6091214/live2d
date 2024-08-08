@@ -39,8 +39,8 @@
       </el-icon>
     </router-link>
     <div class="flex items-center" v-else>
-      <span class="text-white pr-2 text-xl leading-[30px]" v-if="cookie"
-        >{{ cookie }}(遊客)</span
+      <span class="text-white pr-2 text-xl leading-[30px]"
+        >{{ nickname }}(遊客)</span
       >
       <button
         class="p-0 bg-transparent border-none outline-none"
@@ -55,22 +55,18 @@
 </template>
 
 <script setup>
-const cookie = useCookie("nickname");
-
 const props = defineProps({
   scrollOver: Boolean,
 });
 
+const userStore = useUserStore();
+const { setNickname, savaLikeIdList } = userStore;
+const { isLogin, nickname } = storeToRefs(userStore);
+
 const emit = defineEmits(["close"]);
 
-const isLogin = computed(() => {
-  const nickname = cookie?.value || "";
-  return nickname && nickname !== "";
-});
-
 const logout = () => {
-  if (cookie?.value) {
-    cookie.value = "";
-  }
+  setNickname("");
+  savaLikeIdList([]);
 };
 </script>
