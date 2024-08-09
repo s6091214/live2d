@@ -14,6 +14,7 @@
 
 <script lang="ts" setup>
 const memeStore = useMemeStore();
+const { getMemeList } = memeStore;
 const { memeList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
@@ -25,6 +26,12 @@ const filterLikes = computed(() => {
     return result.filter((item) => likeIdList.value.includes(item.id));
   }
   return [];
+});
+
+onMounted(() => {
+  if (!memeList.value.length) {
+    getMemeList();
+  }
 });
 </script>
 
