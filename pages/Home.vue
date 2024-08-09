@@ -1,92 +1,15 @@
 <template>
   <div class="relative">
-    <!-- <div class="w-full top-[48px] left-0 fixed hidden sm:block">
-      <uploadComment @get-list="updateList" />
-    </div> -->
-    <!-- <div class="w-full h-[289px] mb-4 hidden sm:block"></div> -->
     <div class="w-full home-bg min-h-screen">
       <div
         class="mx-auto w-full px-2 sm:px-0 sm:max-w-[630px] pt-[4rem] pb-[20px] relative z-10 min-h-screen"
       >
         <!-- TODO: 文章列表 -->
-        <template v-for="content in memeList" :key="content.id">
-          <div
-            class="max-w-full mx-auto pb-[20px] border-b border-gray-400"
-            style="width: min(470px, 100vw)"
-          >
-            <!-- article header -->
-            <div class="flex items-center text-white py-3">
-              <span>{{ content.created_at_f }}</span>
-            </div>
-            <!-- 文章圖片 -->
-            <div class="w-full max-w-full flex items-center">
-              <a
-                v-if="content.src"
-                id="meme"
-                :href="content.src"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block w-full"
-              >
-                <el-image
-                  class="w-full h-auto"
-                  :src="content.src"
-                  alt="meme"
-                  lazy
-                />
-              </a>
-            </div>
-            <!-- 下方文章資訊及流言區塊 -->
-            <div>
-              <!-- TODO: 操作 -->
-              <div class="flex pb-[4px]">
-                <div>
-                  <span
-                    class="p-[0.5rem] inline-block cursor-pointer"
-                    @click="pressLike(content.id)"
-                  >
-                    <img
-                      class="w-[24px] h-[24px]"
-                      :class="{
-                        grayscale: !isLike(content.id),
-                      }"
-                      src="/heart-like-con.svg"
-                      alt=""
-                    />
-                  </span>
-                  <span
-                    class="p-[0.5rem] inline-block cursor-pointer"
-                    @click="() => {}"
-                  >
-                    <img
-                      class="w-[24px] h-[24px] invert"
-                      src="/comment-icon.svg"
-                      alt=""
-                    />
-                  </span>
-                </div>
-              </div>
-              <!-- TODO: 按讚列表 -->
-              <!-- TODO: tags -->
-              <div class="flex gap-2 pt-[0.5rem]" v-if="content.tags">
-                <el-tag
-                  type="danger"
-                  v-for="tag in content.tags"
-                  :key="tag.id"
-                  effect="dark"
-                  round
-                >
-                  {{ tag.title }}
-                </el-tag>
-              </div>
-              <!-- TODO: 標題 -->
-              <p class="text-left text-white mt-[0.5rem]">
-                <span>{{ content.title }}</span>
-              </p>
-              <!-- TODO: 留言 -->
-            </div>
-          </div>
-        </template>
+        <PostComponent
+          v-for="content in memeList"
+          :key="content.id"
+          :postData="content"
+        />
       </div>
     </div>
   </div>
@@ -96,12 +19,9 @@
 import { useCookie } from "#imports";
 import deviceName from "../util/mobileDetective";
 
-const initialStore = useInitialStore();
-const { handleSignDialog, addAlert } = initialStore;
-
-const userStore = useUserStore();
-const { savaLikeIdList } = userStore;
-const { isLogin, likeIdList } = storeToRefs(userStore);
+const memeStore = useMemeStore();
+const { setMemeList } = memeStore;
+const { memeList } = storeToRefs(memeStore);
 
 const cookieLive2d = useCookie("live2dInit");
 
@@ -110,38 +30,6 @@ declare global {
     OML2D: any;
   }
 }
-
-let memeList = ref([]);
-
-const isLike = (id: number) => {
-  if (id) {
-    return likeIdList.value.includes(id);
-  }
-  return false;
-};
-
-const handleLike = (id: number) => {
-  if (id) {
-    const liked = isLike(id);
-    if (liked) {
-      const filterArray = likeIdList.value.filter((item) => item !== id);
-      savaLikeIdList(filterArray);
-    } else {
-      savaLikeIdList(id);
-    }
-  }
-};
-
-const pressLike = (id) => {
-  if (!isLogin.value) {
-    addAlert({ type: "error", msg: "請先創建暱稱" });
-    handleSignDialog(true);
-    return;
-  }
-  if (id) {
-    handleLike(id);
-  }
-};
 
 /** 看板娘初始化 */
 const live2dInit = () => {
@@ -237,7 +125,7 @@ onMounted(() => {
           return show;
         });
         // console.log(filterArray);
-        memeList.value = filterArray.map((content) => {
+        const memes = filterArray.map((content) => {
           const meme = {
             ...content,
             tags: content.hashtag
@@ -252,6 +140,7 @@ onMounted(() => {
           };
           return meme;
         });
+        setMemeList(memes);
       }
     })
     .catch((error) => {

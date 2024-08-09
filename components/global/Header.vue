@@ -6,7 +6,7 @@
         : 'bg-[#000]'
     }`"
   >
-    <h1 class="font-bold py-1 text-[0px] xl:text-5xl">
+    <h1 class="font-bold py-1 text-[0px]">
       <router-link
         to="/"
         class="w-full h-full text-white text-4xl hover:text-white"
@@ -19,6 +19,21 @@
         />
       </router-link>
     </h1>
+    <ul class="flex-1 flex items-center">
+      <li v-for="page in routeList" :key="page.name">
+        <NuxtLink
+          :to="page.href"
+          class="link block p-3 text-2xl font-bold text-[#222] hover:text-[tomato]"
+          :class="[
+            `${
+              page.href === onRoutes ? 'md:text-yellow-500' : 'md:text-white'
+            }`,
+          ]"
+        >
+          <span class="font-pop">{{ page.name }}</span>
+        </NuxtLink>
+      </li>
+    </ul>
     <div class="flex items-center" v-if="!isLogin">
       <button
         class="hidden md:inline-block p-0 bg-transparent border-none focus:outline-none"
@@ -64,6 +79,23 @@ const { setNickname, savaLikeIdList } = userStore;
 const { isLogin, nickname } = storeToRefs(userStore);
 
 const emit = defineEmits(["close"]);
+
+const routes = useRoute();
+
+const onRoutes = computed(() => {
+  return routes.path;
+});
+
+const routeList = reactive([
+  {
+    href: "/",
+    name: "首頁",
+  },
+  {
+    href: "/PersonSpace",
+    name: "個人空間",
+  },
+]);
 
 const logout = () => {
   setNickname("");
