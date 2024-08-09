@@ -16,14 +16,16 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookie } from "#imports";
+// import { useCookie } from "#imports";
 import deviceName from "../util/mobileDetective";
+
+const initialStore = useInitialStore();
+const { setLive2dInit } = initialStore;
+const { live2dInitStatus } = initialStore;
 
 const memeStore = useMemeStore();
 const { setMemeList } = memeStore;
 const { memeList } = storeToRefs(memeStore);
-
-const cookieLive2d = useCookie("live2dInit");
 
 declare global {
   interface Window {
@@ -34,58 +36,60 @@ declare global {
 /** 看板娘初始化 */
 const live2dInit = () => {
   const OML2D = window.OML2D;
-  OML2D.loadOml2d({
-    models: [
-      {
-        path: "https://model.oml2d.com/cat-black/model.json",
-        scale: 0.15,
-        position: [0, 20],
-        stageStyle: {
-          height: 350,
-        },
-      },
-    ],
-    statusBar: {
-      loadingIcon: "icon-loading",
-    },
-    menus: {
-      items: [
+  if (OML2D && !live2dInitStatus) {
+    OML2D.loadOml2d({
+      models: [
         {
-          id: "Rest",
-          icon: "icon-rest",
-          title: "休息",
-          onClick(oml2d) {
-            // actions ...
-          },
-        },
-        {
-          id: "SwitchModel",
-          icon: "icon-switch",
-          title: "切换模型",
-          onClick(oml2d) {
-            // actions ...
-          },
-        },
-        {
-          id: "About",
-          icon: "icon-about",
-          title: "gtihub",
-          onClick() {
-            window.open("https://github.com/s6091214/live2d");
+          path: "https://model.oml2d.com/cat-black/model.json",
+          scale: 0.15,
+          position: [0, 20],
+          stageStyle: {
+            height: 350,
           },
         },
       ],
-    },
-  });
+      statusBar: {
+        loadingIcon: "icon-loading",
+      },
+      menus: {
+        items: [
+          {
+            id: "Rest",
+            icon: "icon-rest",
+            title: "休息",
+            onClick(oml2d) {
+              // actions ...
+            },
+          },
+          {
+            id: "SwitchModel",
+            icon: "icon-switch",
+            title: "切换模型",
+            onClick(oml2d) {
+              // actions ...
+            },
+          },
+          {
+            id: "About",
+            icon: "icon-about",
+            title: "gtihub",
+            onClick() {
+              window.open("https://github.com/s6091214/live2d");
+            },
+          },
+        ],
+      },
+    });
+    setLive2dInit(true);
+  }
 };
 
 const live2dHandler = () => {
   const OML2D = window.OML2D;
   if (!OML2D) {
-    if (!cookieLive2d?.value) {
-      cookieLive2d.value = "true";
+    if (!live2dInitStatus) {
       setTimeout(() => {
-        live2dHandler();
+        live2dInit();
       }, 1000);
     }
   } else {

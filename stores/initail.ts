@@ -9,6 +9,12 @@ export const useInitialStore = defineStore("initial", () => {
 
   const signDialogStatus = computed(() => signDialog.value)
 
+  const live2dInitStatus = ref(false)
+
+  const setLive2dInit = (value: boolean) => {
+    live2dInitStatus.value = value
+  }
+
   const addAlert = ({ msg, type }) => {
     const vm = this;
     if (msg && msg !== "") {
@@ -30,6 +36,6 @@ export const useInitialStore = defineStore("initial", () => {
   }
 
   return {
-    alerts, globalLoading, signDialogStatus, setLoading, handleSignDialog, addAlert
+    alerts, globalLoading, signDialogStatus, live2dInitStatus, setLoading, handleSignDialog, addAlert, setLive2dInit
   }
 })
