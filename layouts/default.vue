@@ -3,7 +3,7 @@
     <Header :scrollOver="scrollOver" @openUserDialog="openUserDialog" />
     <div
       class="layout w-full mx-auto text-center"
-      style="min-height: calc(100vh - 50px)"
+      style="min-height: calc(100vh - 56px)"
     >
       <slot />
     </div>
@@ -24,11 +24,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 
-// if (import.meta.server) {
-//   const config = useRuntimeConfig();
-//   const { apiKey } = config;
-//   console.log(config);
-// }
+import { onAuthStateChanged } from "firebase/auth";
 
 const initialStore = useInitialStore();
 const { handleSignDialog } = initialStore;
@@ -47,6 +43,8 @@ const openUserDialog = () => {
 const closeUserDialog = () => {
   handleSignDialog(false);
 };
+
+// TODO: 初始化 Firebase
 
 onMounted(() => {
   window.addEventListener("scroll", () => {

@@ -14,7 +14,7 @@ export const useMemeStore = defineStore('meme', () => {
       .then((res) => res.json())
       .then((json) => {
         if (json && json.length) {
-          const filterString = ["免費救援"];
+          const filterString = ["免費救援", "免費援助"];
           const filterArray = json.filter((content) => {
             let show = true;
             const title = content.title;

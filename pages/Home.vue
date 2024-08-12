@@ -142,7 +142,7 @@ onMounted(() => {
   position: absolute;
   width: 50%;
   height: 100%;
-  top: 50px;
+  top: 56px;
   left: 0;
   z-index: 2;
 }
@@ -156,7 +156,7 @@ onMounted(() => {
   position: absolute;
   width: 50%;
   height: 100%;
-  top: 50px;
+  top: 56px;
   right: 0;
   z-index: 2;
 }

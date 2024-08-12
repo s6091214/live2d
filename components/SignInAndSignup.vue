@@ -36,7 +36,7 @@
           <span class="inline-block md:hidden"></span>
           <div>
             <h2 class="mb-4 text-2xl">第三方登入</h2>
-            <p class="text-sm">綁定可解鎖更多功能</p>
+            <p class="text-sm">登入可使用更多功能</p>
           </div>
           <el-button
             type="danger"
@@ -80,33 +80,21 @@
           <h2
             class="text-rose-400 text-2xl xl:mb-12 md:mb-4 font-bold select-none"
           >
-            Gmail 登入
+            Gmail 驗證登入
           </h2>
-          <el-form
-            :model="loginForm"
-            @submit.prevent="onLogin(loginRef)"
-            :rules="loginRules"
-            ref="loginRef"
-          >
-            <el-form-item prop="gmail">
-              <el-input
-                type="email"
-                v-model="loginForm.gmail"
-                placeholder="Gmail 信箱"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                type="danger"
-                native-type="submit"
-                class="w-[120px] mt-8"
-                :disabled="true"
-              >
-                跳轉
-              </el-button>
-            </el-form-item>
-            <p>Gmail 只記錄登入狀態，不做其他用途，敬請放心使用。</p>
-          </el-form>
+          <div>
+            <el-button
+              type="danger"
+              native-type="button"
+              class="w-[120px]"
+              @click="loginWithGoogle"
+            >
+              跳轉
+            </el-button>
+            <p class="text-[#222] pt-3">
+              Gmail 驗證只紀錄 id 及大頭貼顯示用，不做其他用途，敬請放心使用。
+            </p>
+          </div>
         </div>
         <div
           class="w-[80%]"
@@ -166,6 +154,8 @@ const userStore = useUserStore();
 const { setNickname } = userStore;
 const { isLogin } = storeToRefs(userStore);
 
+const { loginWithGoogle } = useUser();
+
 defineProps({
   signDialog: Boolean,
 });
@@ -197,33 +187,13 @@ const setMouseTime = ($event) => {
 const signType = ref("register");
 
 const registerRef = ref();
-const loginRef = ref();
 
 const registerRules = reactive({
   nickname: [{ required: true, message: "請輸入暱稱", trigger: "blur" }],
 });
 
-const loginRules = reactive({
-  gmail: [
-    {
-      required: true,
-      message: "請輸入 Gmail 信箱",
-      trigger: "blur",
-    },
-    {
-      type: "email",
-      message: "請輸入正確信箱格式",
-      trigger: ["blur", "change"],
-    },
-  ],
-});
-
 let registerForm = reactive({
   nickname: "",
-});
-
-let loginForm = reactive({
-  gmail: "",
 });
 
 const onRegister = async (formEl) => {
@@ -232,18 +202,6 @@ const onRegister = async (formEl) => {
     if (valid) {
       setNickname(registerForm.nickname);
       registerForm.nickname = "";
-    } else {
-      console.log("error submit!", fields);
-    }
-  });
-};
-
-const onLogin = async (formEl) => {
-  if (!formEl) return;
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      console.log("Gmail 登入");
-      registerForm.gmail = "";
     } else {
       console.log("error submit!", fields);
     }

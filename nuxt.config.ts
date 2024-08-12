@@ -16,20 +16,22 @@ export default defineNuxtConfig({
           content: "MEMES, SNS, Post, COMMENTS, LIKE and COLLECT",
         },
         {
-          name: 'google-site-verification',
-          content: '9SF0DnY0VkwDUx0m43hTCwoEDRdIhlaDiW8IhREz6xw'
-        }
+          name: "google-site-verification",
+          content: "9SF0DnY0VkwDUx0m43hTCwoEDRdIhlaDiW8IhREz6xw",
+        },
       ],
     },
   },
   runtimeConfig: {
-    apiKey: 'AIzaSyCO5QzTyGMOhbq1etOPxEeqgLf_5NsJOyk',
-    authDomain: "meme-talk-4adb4.firebaseapp.com",
-    projectId: "meme-talk-4adb4",
-    storageBucket: "meme-talk-4adb4.appspot.com",
-    messageSendId: "501625661038",
-    appId: "1:501625661038:web:bba35607396a8bfe29287f",
-    measurementId: "G-ZWVBHHKYRC"
+    public: {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      appId: "",
+      measurementId: "",
+    },
+    dev: process.env.NODE_ENV !== "production",
   },
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
@@ -56,7 +58,7 @@ export default defineNuxtConfig({
       });
     },
   },
-  modules: ["@pinia/nuxt", '@element-plus/nuxt'],
+  modules: ["@pinia/nuxt", "@element-plus/nuxt"],
   imports: {
     dirs: ["stores"],
   },

@@ -54,7 +54,15 @@
       </el-icon>
     </router-link>
     <div class="flex items-center" v-else>
-      <span class="text-white pr-2 text-xl leading-[30px]"
+      <div v-if="isGoogleLogin" class="text-white text-xl flex items-center">
+        <img
+          class="w-[45px] rounded-[50%]"
+          :src="userInfo.photoURL"
+          alt="headshot"
+        />
+        <span class="px-2">{{ userInfo.displayName }}</span>
+      </div>
+      <span v-else class="text-white pr-2 text-xl leading-[30px]"
         >{{ nickname }}(遊客)</span
       >
       <button
@@ -75,8 +83,10 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-const { setNickname, savaLikeIdList } = userStore;
-const { isLogin, nickname } = storeToRefs(userStore);
+const { setNickname, savaLikeIdList, setUserInfo } = userStore;
+const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
+
+const { logoutFromGoogle } = useUser();
 
 const emit = defineEmits(["close"]);
 
@@ -100,5 +110,14 @@ const routeList = reactive([
 const logout = () => {
   setNickname("");
   savaLikeIdList([]);
+  if (isGoogleLogin) {
+    logoutFromGoogle();
+    setUserInfo({
+      displayName: "",
+      photoURL: "",
+      uid: "",
+      email: "",
+    });
+  }
 };
 </script>

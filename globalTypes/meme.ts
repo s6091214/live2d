@@ -1,3 +1,1 @@
-type memeItem = {
-  
-}
+type memeItem = {};

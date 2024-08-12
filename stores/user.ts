@@ -1,48 +1,75 @@
-export const useUserStore = defineStore('user', () => {
-  const nickname = ref('');
+export const useUserStore = defineStore("user", () => {
+  const nickname = ref("");
 
-  const likeIdList: Ref<number[]> = ref([])
+  const likeIdList: Ref<number[]> = ref([]);
 
-  const cookieNickname = useCookie('nickname');
+  const cookieNickname = useCookie("nickname");
 
   const cookieLikeIdList = useCookie("likeIdList");
 
+  const userInfo = ref({
+    displayName: "",
+    photoURL: "",
+    uid: "",
+    email: "",
+  });
+
+  const setUserInfo = (user) => {
+    if (user) {
+      userInfo.value = user;
+    }
+  };
+
   const setNickname = (name: string) => {
-    if (typeof name === 'string') {
+    if (typeof name === "string") {
       nickname.value = name;
       cookieNickname.value = name;
     }
-  }
+  };
 
   const isLogin = computed(() => {
-    if (nickname.value && nickname.value !== '') return true
-    return false
-  })
+    if (nickname.value && nickname.value !== "") return true;
+    return false;
+  });
 
-  const savaLikeIdList = (payload: number | number[] ) => {
+  const isGoogleLogin = computed(() => {
+    if (userInfo.value.uid !== "") return true;
+    return false;
+  });
+
+  const savaLikeIdList = (payload: number | number[]) => {
     let newList = [...likeIdList.value];
-    if (typeof payload === 'number') newList.push(payload)
-    else newList = payload
+    if (typeof payload === "number") newList.push(payload);
+    else newList = payload;
     likeIdList.value = newList;
     cookieLikeIdList.value = newList.join(",");
-  }
+  };
 
   onMounted(() => {
-    if(cookieNickname?.value) {
-      nickname.value = cookieNickname.value
+    if (cookieNickname?.value) {
+      nickname.value = cookieNickname.value;
     }
-    if(cookieLikeIdList?.value) {
+    if (cookieLikeIdList?.value) {
       const cookie = cookieLikeIdList.value.toString();
       const saveData = cookie.split(",");
-      likeIdList.value = saveData.map(item => {
+      likeIdList.value = saveData.map((item) => {
         try {
-          return Number(item)
+          return Number(item);
         } catch (error) {
-          return 0
+          return 0;
         }
       });
     }
-  })
+  });
 
-  return { nickname, likeIdList, isLogin, setNickname, savaLikeIdList }
-})
+  return {
+    nickname,
+    likeIdList,
+    userInfo,
+    isLogin,
+    isGoogleLogin,
+    setNickname,
+    savaLikeIdList,
+    setUserInfo,
+  };
+});
