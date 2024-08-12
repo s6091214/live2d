@@ -24,6 +24,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 
+// if (import.meta.server) {
+//   const config = useRuntimeConfig();
+//   const { apiKey } = config;
+//   console.log(config);
+// }
+
 const initialStore = useInitialStore();
 const { handleSignDialog } = initialStore;
 const { globalLoading, signDialogStatus } = storeToRefs(initialStore);

@@ -62,10 +62,7 @@
       >
         <div
           class="sm:w-[80%] absolute left-[10%] top-[20%]"
-          style="
-            transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out,
-              transform 0.5s ease-in-out;
-          "
+          style="transition: all 0.4s ease-in-out"
           :style="
             signType === 'login'
               ? {
@@ -113,10 +110,7 @@
         </div>
         <div
           class="w-[80%]"
-          style="
-            transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out,
-              transform 0.5s ease-in-out;
-          "
+          style="transition: all 0.4s ease-in-out"
           :style="
             signType === 'register'
               ? {

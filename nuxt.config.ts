@@ -22,6 +22,15 @@ export default defineNuxtConfig({
       ],
     },
   },
+  runtimeConfig: {
+    apiKey: 'AIzaSyCO5QzTyGMOhbq1etOPxEeqgLf_5NsJOyk',
+    authDomain: "meme-talk-4adb4.firebaseapp.com",
+    projectId: "meme-talk-4adb4",
+    storageBucket: "meme-talk-4adb4.appspot.com",
+    messageSendId: "501625661038",
+    appId: "1:501625661038:web:bba35607396a8bfe29287f",
+    measurementId: "G-ZWVBHHKYRC"
+  },
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],

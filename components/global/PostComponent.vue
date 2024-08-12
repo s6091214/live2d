@@ -53,7 +53,7 @@
       </div>
       <!-- TODO: 按讚列表 -->
       <!-- TODO: tags -->
-      <div class="flex gap-2 pt-[0.5rem]" v-if="postData.tags">
+      <div class="flex flex-wrap gap-2 pt-[0.5rem]" v-if="postData.tags">
         <el-tag
           type="danger"
           v-for="tag in postData.tags"
