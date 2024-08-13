@@ -40,7 +40,7 @@
             />
           </span>
           <el-button
-            @click="emit('handleTip')"
+            @click="handleComment"
             @mouseover="($event) => emit('showTooltip', $event.currentTarget)"
           >
             <img
@@ -69,6 +69,58 @@
         <span>{{ postData.title }}</span>
       </p>
       <!-- TODO: 留言 -->
+      <div class="text-left">
+        <!-- <a
+          v-show="!commentsControls[content.id]"
+          v-if="content.comments && content.comments.length"
+          href="#"
+          event=""
+          @click.prevent="showComments(content.id)"
+          class="text-neutral-500"
+          >查看全部{{ content.comments.length }}則留言</a
+        > -->
+        <!-- <div v-show="commentsControls[content.id]">
+          <ul>
+            <li
+              class="pt-[12px]"
+              v-for="comment in content.comments"
+              :key="comment.id"
+            >
+              <div class="flex">
+                <el-avatar
+                  class="mr-3"
+                  :size="32"
+                  :src="comment.avatar"
+                  @error="() => {}"
+                >
+                  <img src="/default-headshot.png" />
+                </el-avatar>
+                <div class="flex flex-col">
+                  <p class="text-white">
+                    <span
+                      class="font-bold inline-block text-sky-500 mr-[4px]"
+                      >{{
+                        comment.user ? comment.user.nickname : "noname"
+                      }}</span
+                    >
+                    <span v-html="renderHtml(comment.comment)"></span>
+                  </p>
+                  <div
+                    v-if="comment.created_at"
+                    v-timeformat="comment.created_at"
+                    class="text-neutral-500 mt-[0.5rem] flex-1"
+                  ></div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div> -->
+        <!-- @getList="updateList" -->
+        <ReplyComment
+          v-if="isGoogleLogin && showCommentBlock"
+          :comment="postData"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -89,9 +141,19 @@ const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
 const { savaLikeIdList } = userStore;
-const { isLogin, likeIdList } = storeToRefs(userStore);
+const { isLogin, likeIdList, isGoogleLogin } = storeToRefs(userStore);
 
 defineProps<{ postData: postItem }>();
+
+const showCommentBlock = ref(false);
+
+const handleComment = () => {
+  if (isGoogleLogin.value) {
+    showCommentBlock.value = true;
+  } else {
+    emit("handleTip");
+  }
+};
 
 const isLike = (id: number) => {
   if (id) {
