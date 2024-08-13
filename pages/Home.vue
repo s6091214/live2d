@@ -9,29 +9,70 @@
           v-for="content in memeList"
           :key="content.id"
           :postData="content"
+          @showTooltip="(target) => (buttonRef = target)"
+          @handleTip="tipHandler"
         />
+        <el-tooltip
+          ref="tooltipRef"
+          :visible="tipVisible"
+          :popper-options="{
+            modifiers: [
+              {
+                name: 'computeStyles',
+                options: {
+                  adaptive: false,
+                  enabled: false,
+                },
+              },
+            ],
+          }"
+          :virtual-ref="buttonRef"
+          virtual-triggering
+          popper-class="singleton-tooltip"
+        >
+          <template #content>
+            <span>通過 Google 驗證即可留言</span>
+          </template>
+        </el-tooltip>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-// import { useCookie } from "#imports";
 import deviceName from "../util/mobileDetective";
 
 const initialStore = useInitialStore();
 const { setLive2dInit } = initialStore;
-const { live2dInitStatus } = initialStore;
+const { live2dInitStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
 const { getMemeList } = memeStore;
 const { memeList } = storeToRefs(memeStore);
+
+const userStore = useUserStore();
+const { isGoogleLogin } = storeToRefs(userStore);
 
 declare global {
   interface Window {
     OML2D: any;
   }
 }
+
+/** 提示框 Ref */
+const buttonRef = ref();
+
+const tooltipRef = ref();
+
+const tipVisible = ref(false);
+
+const tipHandler = () => {
+  if (isGoogleLogin.value) {
+    console.log("google 登入");
+  } else {
+    tipVisible.value = !tipVisible.value;
+  }
+};
 
 /** 看板娘初始化 */
 const live2dInit = () => {
@@ -119,6 +160,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.singleton-tooltip {
+  transition: transform 0.3s var(--el-transition-function-fast-bezier);
+}
 .home-bg {
   position: relative;
   z-index: 1;

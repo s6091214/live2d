@@ -25,7 +25,7 @@
     <div>
       <!-- TODO: 操作 -->
       <div class="flex pb-[4px]">
-        <div>
+        <div class="flex items-center">
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
             @click="pressLike(postData.id)"
@@ -39,16 +39,16 @@
               alt=""
             />
           </span>
-          <span
-            class="p-[0.5rem] inline-block cursor-pointer"
-            @click="() => {}"
+          <el-button
+            @click="emit('handleTip')"
+            @mouseover="($event) => emit('showTooltip', $event.currentTarget)"
           >
             <img
               class="w-[24px] h-[24px] invert"
               src="../../public/comment-icon.svg"
               alt=""
             />
-          </span>
+          </el-button>
         </div>
       </div>
       <!-- TODO: 按讚列表 -->
@@ -81,6 +81,8 @@ type postItem = {
   tags?: { id: string; title: string }[];
   id: number;
 };
+
+const emit = defineEmits(["showTooltip", "handleTip"]);
 
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
@@ -122,4 +124,14 @@ const pressLike = (id) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-button,
+.el-button.is-round {
+  padding: 0.5rem;
+  background-color: transparent;
+  border: none;
+}
+.el-button:focus {
+  outline: none;
+}
+</style>
