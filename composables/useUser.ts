@@ -60,5 +60,6 @@ export const useUser = () => {
   return {
     loginWithGoogle,
     logoutFromGoogle,
+    user,
   };
 };

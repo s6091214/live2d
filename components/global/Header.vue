@@ -57,6 +57,7 @@
       <div v-if="isGoogleLogin" class="text-white text-xl flex items-center">
         <img
           class="w-[45px] rounded-[50%]"
+          v-if="userInfo?.photoURL"
           :src="userInfo.photoURL"
           alt="headshot"
         />

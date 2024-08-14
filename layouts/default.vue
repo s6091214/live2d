@@ -24,7 +24,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 
-import { onAuthStateChanged } from "firebase/auth";
+const { data: userList } = await useFetch("/api/user");
+
+console.log(userList.value);
 
 const initialStore = useInitialStore();
 const { handleSignDialog } = initialStore;
