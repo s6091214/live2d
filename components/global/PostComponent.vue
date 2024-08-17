@@ -156,7 +156,7 @@ const handleComment = () => {
 };
 
 const isLike = (id: number) => {
-  if (id) {
+  if (id && likeIdList?.value) {
     return likeIdList.value.includes(id);
   }
   return false;

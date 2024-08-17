@@ -84,12 +84,11 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-const { setNickname, savaLikeIdList, setUserInfo } = userStore;
+const { setNickname, savaLikeIdList, setUserInfo, logoutFromGoogle } =
+  userStore;
 const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
 
-const { logoutFromGoogle } = useUser();
-
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "openUserDialog"]);
 
 const routes = useRoute();
 
