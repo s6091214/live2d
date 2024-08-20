@@ -16,6 +16,6 @@ const userSchema = new Schema({
   },
 });
 
-const user = mongoose.model("memetalk-nuxt3", userSchema, "user");
+const user = mongoose.model("memetalk-nuxt3.user", userSchema, "user");
 
 export default user;

@@ -152,6 +152,11 @@ if (deviceName === "unknown") {
   });
 }
 
+const { data: hotMemeList, refresh } = await useAsyncData(
+  "getHotMemeList",
+  () => $fetch("/api/meme")
+);
+
 onMounted(() => {
   if (!memeList.value.length) {
     getMemeList();

@@ -28,7 +28,7 @@
         <div class="flex items-center">
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
-            @click="pressLike(postData.id)"
+            @click="pressLike"
           >
             <img
               class="w-[24px] h-[24px]"
@@ -132,6 +132,7 @@ type postItem = {
   src: string;
   tags?: { id: string; title: string }[];
   id: number;
+  liked_user?: string[];
 };
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
@@ -141,9 +142,9 @@ const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
 const { savaLikeIdList } = userStore;
-const { isLogin, likeIdList, isGoogleLogin } = storeToRefs(userStore);
+const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
-defineProps<{ postData: postItem }>();
+const props = defineProps<{ postData: postItem }>();
 
 const showCommentBlock = ref(false);
 
@@ -174,14 +175,49 @@ const handleLike = (id: number) => {
   }
 };
 
-const pressLike = (id) => {
+const handleServerLike = async () => {
+  const liked = isLike(props.postData.id);
+  let liked_user = props.postData.liked_user
+    ? [...props.postData.liked_user]
+    : [];
+
+  if (userInfo?.value.uid) {
+    if (liked) {
+      liked_user.push(userInfo.value.uid);
+    } else {
+      liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
+    }
+  }
+
+  const { data: res } = await useAsyncData("postLike", () =>
+    $fetch("/api/meme/like", {
+      method: "POST",
+      body: { ...props.postData, liked_user },
+    })
+  );
+  if (res.value) {
+    const { status } = res.value;
+    if (!status) {
+      const { data: putRes } = await useAsyncData("postLike", () =>
+        $fetch("/api/meme/comment", {
+          method: "PUT",
+          body: { ...props.postData, liked_user },
+        })
+      );
+      console.log(putRes.value.status);
+    }
+  }
+};
+
+const pressLike = () => {
   if (!isLogin.value) {
     addAlert({ type: "error", msg: "請先創建暱稱" });
     handleSignDialog(true);
     return;
   }
-  if (id) {
-    handleLike(id);
+  if (props.postData) {
+    handleLike(props.postData.id);
+    handleServerLike();
   }
 };
 </script>
