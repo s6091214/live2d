@@ -25,9 +25,7 @@
           :to="page.href"
           class="link block p-3 text-2xl font-bold text-[#222] hover:text-[tomato]"
           :class="[
-            `${
-              page.href === onRoutes ? 'md:text-yellow-500' : 'md:text-white'
-            }`,
+            `${page.href === onRoutes ? 'text-yellow-500' : 'text-white'}`,
           ]"
         >
           <span class="font-pop">{{ page.name }}</span>

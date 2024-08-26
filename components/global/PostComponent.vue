@@ -189,19 +189,23 @@ const handleServerLike = async () => {
     }
   }
 
+  const requestData = { ...props.postData, liked_user };
+
+  console.log(requestData);
+
   const { data: res } = await useAsyncData("postLike", () =>
     $fetch("/api/meme/like", {
       method: "POST",
-      body: { ...props.postData, liked_user },
+      body: { ...requestData },
     })
   );
   if (res.value) {
     const { status } = res.value;
     if (!status) {
-      const { data: putRes } = await useAsyncData("postLike", () =>
-        $fetch("/api/meme/comment", {
+      const { data: putRes } = await useAsyncData("postLikePut", () =>
+        $fetch("/api/meme/update", {
           method: "PUT",
-          body: { ...props.postData, liked_user },
+          body: { ...requestData },
         })
       );
       console.log(putRes.value.status);
