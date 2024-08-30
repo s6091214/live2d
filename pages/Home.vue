@@ -127,7 +127,7 @@ const live2dInit = () => {
 
 const live2dHandler = () => {
   const OML2D = window.OML2D;
-  console.log("test", live2dInitStatus.value);
+  // console.log("test", live2dInitStatus.value);
   if (!OML2D) {
     if (!live2dInitStatus.value) {
       setTimeout(() => {

@@ -1,6 +1,6 @@
 import memeModel from "~/server/model/meme.model";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: any) => {
   const body = await readBody(event);
 
   const { id } = body;
