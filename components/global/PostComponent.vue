@@ -29,6 +29,7 @@
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
             @click="pressLike"
+            v-if="onRoutes !== '/HotMeme'"
           >
             <img
               class="w-[24px] h-[24px]"
@@ -145,6 +146,12 @@ const { savaLikeIdList } = userStore;
 const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
 const props = defineProps<{ postData: postItem }>();
+
+const routes = useRoute();
+
+const onRoutes = computed(() => {
+  return routes.path;
+});
 
 const showCommentBlock = ref(false);
 
