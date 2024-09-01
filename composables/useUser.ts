@@ -1,21 +1,8 @@
-import {
-  signInWithPopup,
-  signOut,
-  GoogleAuthProvider,
-  onIdTokenChanged,
-} from "firebase/auth";
-export type UserType = {
-  displayName: string | null;
-  photoURL: string | null;
-  uid: string;
-  email: string | null;
-};
+import { onIdTokenChanged } from "firebase/auth";
 
 export const useUser = () => {
-  const { $auth } = useNuxtApp();
-
   const userStore = useUserStore();
-  const { setUserInfo, setNickname } = userStore;
+  const { setUserInfo, setNickname, setUserList } = userStore;
 
   const user = useState<UserType | null>("user", () => null);
 
@@ -34,15 +21,29 @@ export const useUser = () => {
 
   let unsubscribe = null;
 
-  const loginWithGoogle = async () => {
-    await signInWithPopup($auth, new GoogleAuthProvider());
+  const getUserList = async () => {
+    const { data: users } = await useAsyncData("getUserList", () =>
+      $fetch("/api/user")
+    );
+    if (users.value) {
+      setUserList(users.value);
+    }
   };
 
-  const logoutFromGoogle = async () => {
-    await signOut($auth);
+  const addUser = async (userData) => {
+    const { data: res } = await useAsyncData("addUser", () =>
+      $fetch("/api/user/create", {
+        method: "POST",
+        body: { ...userData },
+      })
+    );
+    if (res.value.status) {
+      getUserList();
+    }
   };
 
-  onMounted(() => {
+  onMounted(async () => {
+    const { $auth } = useNuxtApp();
     initialLoad.value = false;
     unsubscribe = onIdTokenChanged($auth, async (_user) => {
       if (!_user || !_user.uid) {
@@ -52,13 +53,13 @@ export const useUser = () => {
       const { displayName, photoURL, uid, email } = _user;
       setNickname(displayName);
       setUserInfo({ displayName, photoURL, uid, email });
+      addUser({ displayName, photoURL, uid, email });
     });
   });
 
   onUnmounted(unsubscribe);
 
   return {
-    loginWithGoogle,
-    logoutFromGoogle,
+    user,
   };
 };
