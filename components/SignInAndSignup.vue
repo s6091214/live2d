@@ -151,10 +151,8 @@
 import deviceName from "../util/mobileDetective";
 
 const userStore = useUserStore();
-const { setNickname } = userStore;
+const { setNickname, loginWithGoogle } = userStore;
 const { isLogin } = storeToRefs(userStore);
-
-const { loginWithGoogle } = useUser();
 
 defineProps({
   signDialog: Boolean,

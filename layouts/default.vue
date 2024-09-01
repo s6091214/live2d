@@ -24,11 +24,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 
-import { onAuthStateChanged } from "firebase/auth";
-
 const initialStore = useInitialStore();
 const { handleSignDialog } = initialStore;
 const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
+
+const userStore = useUserStore();
+const { setUserList } = userStore;
 
 const scrollOver = ref(false);
 
@@ -44,9 +45,20 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-// TODO: 初始化 Firebase
+const getUserList = async () => {
+  const { data: users } = await useAsyncData("getUserList", () =>
+    $fetch("/api/user")
+  );
+  if (users.value) {
+    setUserList(users.value);
+  }
+};
 
-onMounted(() => {
+getUserList();
+
+const { user } = useUser();
+
+onMounted(async () => {
   window.addEventListener("scroll", () => {
     const overHeigth = window.scrollY > 200;
     setScrollOver(overHeigth);

@@ -28,7 +28,8 @@
         <div class="flex items-center">
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
-            @click="pressLike(postData.id)"
+            @click="pressLike"
+            v-if="onRoutes !== '/HotMeme'"
           >
             <img
               class="w-[24px] h-[24px]"
@@ -132,6 +133,7 @@ type postItem = {
   src: string;
   tags?: { id: string; title: string }[];
   id: number;
+  liked_user?: string[];
 };
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
@@ -141,9 +143,15 @@ const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
 const { savaLikeIdList } = userStore;
-const { isLogin, likeIdList, isGoogleLogin } = storeToRefs(userStore);
+const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
-defineProps<{ postData: postItem }>();
+const props = defineProps<{ postData: postItem }>();
+
+const routes = useRoute();
+
+const onRoutes = computed(() => {
+  return routes.path;
+});
 
 const showCommentBlock = ref(false);
 
@@ -156,7 +164,7 @@ const handleComment = () => {
 };
 
 const isLike = (id: number) => {
-  if (id) {
+  if (id && likeIdList?.value) {
     return likeIdList.value.includes(id);
   }
   return false;
@@ -174,14 +182,54 @@ const handleLike = (id: number) => {
   }
 };
 
-const pressLike = (id) => {
+const handleServerLike = async () => {
+  const liked = isLike(props.postData.id);
+  let liked_user = props.postData.liked_user
+    ? [...props.postData.liked_user]
+    : [];
+
+  if (userInfo?.value.uid) {
+    if (liked) {
+      liked_user.push(userInfo.value.uid);
+    } else {
+      liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
+    }
+  }
+
+  const requestData = { ...props.postData, liked_user };
+
+  const { data: res } = await useAsyncData("postLike", () =>
+    $fetch("/api/meme/like", {
+      method: "POST",
+      body: { ...requestData },
+    })
+  );
+
+  // console.log(res.value);
+
+  if (res.value) {
+    const { status } = res.value;
+    if (!status) {
+      const { data: putRes } = await useAsyncData("postLikePut", () =>
+        $fetch("/api/meme/update", {
+          method: "PUT",
+          body: { ...requestData },
+        })
+      );
+      // console.log(putRes.value.status);
+    }
+  }
+};
+
+const pressLike = () => {
   if (!isLogin.value) {
     addAlert({ type: "error", msg: "請先創建暱稱" });
     handleSignDialog(true);
     return;
   }
-  if (id) {
-    handleLike(id);
+  if (props.postData) {
+    handleLike(props.postData.id);
+    handleServerLike();
   }
 };
 </script>
