@@ -23,5 +23,5 @@ yarn dev
 # bun
 bun run dev
 ```
-
+version：v0902
 Check out the [DEMO](https://live2d-two.vercel.app/) for more information.
