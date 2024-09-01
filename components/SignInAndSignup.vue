@@ -88,7 +88,6 @@
               native-type="button"
               class="w-[120px]"
               @click="loginWithGoogle"
-              disabled
             >
               跳轉
             </el-button>
@@ -152,8 +151,10 @@
 import deviceName from "../util/mobileDetective";
 
 const userStore = useUserStore();
-const { setNickname, loginWithGoogle } = userStore;
+const { setNickname } = userStore;
 const { isLogin } = storeToRefs(userStore);
+
+const { loginWithGoogle } = useUser();
 
 defineProps({
   signDialog: Boolean,
