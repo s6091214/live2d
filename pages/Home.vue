@@ -77,7 +77,7 @@ const tipHandler = () => {
 /** 看板娘初始化 */
 const live2dInit = () => {
   const OML2D = window.OML2D;
-  if (OML2D && !live2dInitStatus.value) {
+  if (OML2D && !live2dInitStatus) {
     OML2D.loadOml2d({
       models: [
         {
@@ -127,9 +127,8 @@ const live2dInit = () => {
 
 const live2dHandler = () => {
   const OML2D = window.OML2D;
-  // console.log("test", live2dInitStatus.value);
   if (!OML2D) {
-    if (!live2dInitStatus.value) {
+    if (!live2dInitStatus) {
       setTimeout(() => {
         live2dInit();
       }, 1000);

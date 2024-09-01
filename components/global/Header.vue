@@ -25,7 +25,9 @@
           :to="page.href"
           class="link block p-3 text-2xl font-bold text-[#222] hover:text-[tomato]"
           :class="[
-            `${page.href === onRoutes ? 'text-yellow-500' : 'text-white'}`,
+            `${
+              page.href === onRoutes ? 'md:text-yellow-500' : 'md:text-white'
+            }`,
           ]"
         >
           <span class="font-pop">{{ page.name }}</span>
@@ -55,7 +57,6 @@
       <div v-if="isGoogleLogin" class="text-white text-xl flex items-center">
         <img
           class="w-[45px] rounded-[50%]"
-          v-if="userInfo?.photoURL"
           :src="userInfo.photoURL"
           alt="headshot"
         />
@@ -82,11 +83,12 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-const { setNickname, savaLikeIdList, setUserInfo, logoutFromGoogle } =
-  userStore;
+const { setNickname, savaLikeIdList, setUserInfo } = userStore;
 const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
 
-const emit = defineEmits(["close", "openUserDialog"]);
+const { logoutFromGoogle } = useUser();
+
+const emit = defineEmits(["close"]);
 
 const routes = useRoute();
 
@@ -102,10 +104,6 @@ const routeList = reactive([
   {
     href: "/PersonSpace",
     name: "個人空間",
-  },
-  {
-    href: "/HotMeme",
-    name: "熱門迷因",
   },
 ]);
 

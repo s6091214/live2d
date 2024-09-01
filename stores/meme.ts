@@ -1,28 +1,13 @@
-import type { MemePost } from "~/types";
+export const useMemeStore = defineStore('meme', () => {
+  let memes = ref([])
 
-export const useMemeStore = defineStore("meme", () => {
-  let memes = ref([]);
-  let hotMemes = ref([]);
-
-  const memeList = computed(() => memes.value);
-  const hotMemesList = computed(() => {
-    const list = hotMemes.value.filter((meme) => meme.id);
-    return list.sort((a: MemePost, b: MemePost) => {
-      const timestampA = a.created_at?.timestamp || 0;
-      const timestampB = b.created_at?.timestamp || 0;
-      return timestampB - timestampA;
-    });
-  });
+  const memeList = computed(() => memes.value)
 
   const setMemeList = (list) => {
     if (list && list.length) {
       memes.value = list;
     }
-  };
-
-  const setHotMeme = (list) => {
-    if (list && list.length) hotMemes.value = list;
-  };
+  }
 
   const getMemeList = () => {
     fetch("https://memes.tw/wtf/api")
@@ -63,13 +48,9 @@ export const useMemeStore = defineStore("meme", () => {
       .catch((error) => {
         console.error(error);
       });
-  };
+  }
 
   return {
-    memeList,
-    hotMemesList,
-    setMemeList,
-    getMemeList,
-    setHotMeme,
-  };
-});
+    memeList, setMemeList, getMemeList
+  }
+})

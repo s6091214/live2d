@@ -1,5 +1,3 @@
-import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
-
 export const useUserStore = defineStore("user", () => {
   const nickname = ref("");
 
@@ -9,16 +7,17 @@ export const useUserStore = defineStore("user", () => {
 
   const cookieLikeIdList = useCookie("likeIdList");
 
-  const userList = ref([]);
+  const userInfo = ref({
+    displayName: "",
+    photoURL: "",
+    uid: "",
+    email: "",
+  });
 
-  const userInfo = ref({} as UserType);
-
-  const setUserInfo = (userData) => {
-    userInfo.value = userData;
-  };
-
-  const setUserList = (users) => {
-    userList.value = users;
+  const setUserInfo = (user) => {
+    if (user) {
+      userInfo.value = user;
+    }
   };
 
   const setNickname = (name: string) => {
@@ -46,17 +45,6 @@ export const useUserStore = defineStore("user", () => {
     cookieLikeIdList.value = newList.join(",");
   };
 
-  const loginWithGoogle = async () => {
-    const { $auth } = useNuxtApp();
-    console.log($auth);
-    await signInWithPopup($auth, new GoogleAuthProvider());
-  };
-
-  const logoutFromGoogle = async () => {
-    const { $auth } = useNuxtApp();
-    await signOut($auth);
-  };
-
   onMounted(() => {
     if (cookieNickname?.value) {
       nickname.value = cookieNickname.value;
@@ -80,12 +68,8 @@ export const useUserStore = defineStore("user", () => {
     userInfo,
     isLogin,
     isGoogleLogin,
-    userList,
-    setUserInfo,
     setNickname,
     savaLikeIdList,
-    setUserList,
-    loginWithGoogle,
-    logoutFromGoogle,
+    setUserInfo,
   };
 });
