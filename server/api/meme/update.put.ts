@@ -8,12 +8,8 @@ export default defineEventHandler(async (event: any) => {
   const existingMeme = await memeModel.findOne({ id });
 
   if (existingMeme) {
-    // await existingMeme.updateOne(existingMeme, { liked_user });
-    // existingMeme.liked_user = liked_user;
-    // await existingMeme.save();
-    const result = await memeModel.updateOne({ id }, { $set: { liked_user } });
-
-    return { status: result.nModified > 0 ? true : false };
+    existingMeme.liked_user = liked_user;
+    await existingMeme.save();
   }
 
   return { status: false };
