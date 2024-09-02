@@ -5,30 +5,30 @@ export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
   let auth = null;
 
-  if (!getApps().length) {
-    const {
-      apiKey,
-      authDomain,
-      projectId,
-      storageBucket,
-      appId,
-      measurementId,
-    } = config;
-    const firebaseConfig = {
-      apiKey,
-      authDomain,
-      projectId,
-      storageBucket,
-      appId,
-      measurementId,
-    };
-    // try {
-    //   initializeApp(firebaseConfig as any);
-    //   auth = getAuth();
-    // } catch (error) {
-    //   console.log(`firebase init error： ${error}`);
-    // }
-  }
+  // if (!getApps().length) {
+  //   const {
+  //     apiKey,
+  //     authDomain,
+  //     projectId,
+  //     storageBucket,
+  //     appId,
+  //     measurementId,
+  //   } = config;
+  //   const firebaseConfig = {
+  //     apiKey,
+  //     authDomain,
+  //     projectId,
+  //     storageBucket,
+  //     appId,
+  //     measurementId,
+  //   };
+  //   try {
+  //     initializeApp(firebaseConfig as any);
+  //     auth = getAuth();
+  //   } catch (error) {
+  //     console.log(`firebase init error： ${error}`);
+  //   }
+  // }
 
   return {
     provide: {
