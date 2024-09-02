@@ -22,12 +22,12 @@ export default defineNuxtPlugin(() => {
       appId,
       measurementId,
     };
-    try {
-      initializeApp(firebaseConfig as any);
-      auth = getAuth();
-    } catch (error) {
-      console.log(`firebase init error： ${error}`);
-    }
+    // try {
+    //   initializeApp(firebaseConfig as any);
+    //   auth = getAuth();
+    // } catch (error) {
+    //   console.log(`firebase init error： ${error}`);
+    // }
   }
 
   return {
