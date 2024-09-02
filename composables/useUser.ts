@@ -45,16 +45,18 @@ export const useUser = () => {
   onMounted(async () => {
     const { $auth } = useNuxtApp();
     initialLoad.value = false;
-    unsubscribe = onIdTokenChanged($auth, async (_user) => {
-      if (!_user || !_user.uid) {
-        user.value = null;
-        return;
-      }
-      const { displayName, photoURL, uid, email } = _user;
-      setNickname(displayName);
-      setUserInfo({ displayName, photoURL, uid, email });
-      addUser({ displayName, photoURL, uid, email });
-    });
+    if ($auth) {
+      unsubscribe = onIdTokenChanged($auth, async (_user) => {
+        if (!_user || !_user.uid) {
+          user.value = null;
+          return;
+        }
+        const { displayName, photoURL, uid, email } = _user;
+        setNickname(displayName);
+        setUserInfo({ displayName, photoURL, uid, email });
+        addUser({ displayName, photoURL, uid, email });
+      });
+    }
   });
 
   onUnmounted(unsubscribe);

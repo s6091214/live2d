@@ -3,6 +3,8 @@ import { getAuth } from "firebase/auth";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
+  let auth = null;
+
   if (!getApps().length) {
     const {
       apiKey,
@@ -11,7 +13,7 @@ export default defineNuxtPlugin(() => {
       storageBucket,
       appId,
       measurementId,
-    } = config.public;
+    } = config;
     const firebaseConfig = {
       apiKey,
       authDomain,
@@ -20,10 +22,13 @@ export default defineNuxtPlugin(() => {
       appId,
       measurementId,
     };
-    initializeApp(firebaseConfig);
+    try {
+      initializeApp(firebaseConfig as any);
+      auth = getAuth();
+    } catch (error) {
+      console.log(`firebase init error： ${error}`);
+    }
   }
-
-  const auth = getAuth();
 
   return {
     provide: {
