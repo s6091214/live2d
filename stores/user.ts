@@ -48,13 +48,16 @@ export const useUserStore = defineStore("user", () => {
 
   const loginWithGoogle = async () => {
     const { $auth } = useNuxtApp();
-    console.log($auth);
-    await signInWithPopup($auth, new GoogleAuthProvider());
+    if ($auth) {
+      await signInWithPopup($auth, new GoogleAuthProvider());
+    }
   };
 
   const logoutFromGoogle = async () => {
     const { $auth } = useNuxtApp();
-    await signOut($auth);
+    if ($auth) {
+      await signOut($auth);
+    }
   };
 
   onMounted(() => {

@@ -56,7 +56,7 @@ const getUserList = async () => {
 
 getUserList();
 
-const { user } = useUser();
+// const { user } = useUser();
 
 onMounted(async () => {
   window.addEventListener("scroll", () => {
