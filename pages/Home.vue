@@ -139,19 +139,19 @@ const live2dHandler = () => {
   }
 };
 
-if (deviceName === "unknown") {
-  useHead({
-    script: [
-      {
-        src: "https://unpkg.com/oh-my-live2d@latest",
-        async: true,
-        onload: () => {
-          live2dHandler();
-        },
-      },
-    ],
-  });
-}
+// if (deviceName === "unknown") {
+//   useHead({
+//     script: [
+//       {
+//         src: "https://unpkg.com/oh-my-live2d@latest",
+//         async: true,
+//         onload: () => {
+//           live2dHandler();
+//         },
+//       },
+//     ],
+//   });
+// }
 
 onMounted(() => {
   if (!memeList.value.length) {
