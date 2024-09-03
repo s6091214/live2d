@@ -34,7 +34,8 @@ export const useUserStore = defineStore("user", () => {
   });
 
   const isGoogleLogin = computed(() => {
-    if (userInfo.value.uid !== "") return true;
+    if (userInfo.value.uid !== "" && Object.keys(userInfo.value).length)
+      return true;
     return false;
   });
 
