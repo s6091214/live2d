@@ -103,10 +103,10 @@ const routeList = reactive([
     href: "/PersonSpace",
     name: "個人空間",
   },
-  {
-    href: "/HotMeme",
-    name: "熱門迷因",
-  },
+  // {
+  //   href: "/HotMeme",
+  //   name: "熱門迷因",
+  // },
 ]);
 
 const logout = () => {

@@ -17,13 +17,13 @@ const memeStore = useMemeStore();
 const { setHotMeme } = memeStore;
 const { hotMemesList } = storeToRefs(memeStore);
 
-const { data, refresh } = await useAsyncData("getHotMemeList", () =>
-  $fetch("/api/meme")
-);
+// const { data, refresh } = await useAsyncData("getHotMemeList", () =>
+//   $fetch("/api/meme")
+// );
 
-if (data.value) {
-  setHotMeme(data.value);
-}
+// if (data.value) {
+//   setHotMeme(data.value);
+// }
 </script>
 
 <style scoped></style>

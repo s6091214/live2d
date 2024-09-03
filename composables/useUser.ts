@@ -21,26 +21,26 @@ export const useUser = () => {
 
   let unsubscribe = null;
 
-  const getUserList = async () => {
-    const { data: users } = await useAsyncData("getUserList", () =>
-      $fetch("/api/user")
-    );
-    if (users.value) {
-      setUserList(users.value);
-    }
-  };
+  // const getUserList = async () => {
+  //   const { data: users } = await useAsyncData("getUserList", () =>
+  //     $fetch("/api/user")
+  //   );
+  //   if (users.value) {
+  //     setUserList(users.value);
+  //   }
+  // };
 
-  const addUser = async (userData) => {
-    const { data: res } = await useAsyncData("addUser", () =>
-      $fetch("/api/user/create", {
-        method: "POST",
-        body: { ...userData },
-      })
-    );
-    if (res.value.status) {
-      getUserList();
-    }
-  };
+  // const addUser = async (userData) => {
+  //   const { data: res } = await useAsyncData("addUser", () =>
+  //     $fetch("/api/user/create", {
+  //       method: "POST",
+  //       body: { ...userData },
+  //     })
+  //   );
+  //   if (res.value.status) {
+  //     getUserList();
+  //   }
+  // };
 
   onMounted(async () => {
     const { $auth } = useNuxtApp();
@@ -54,7 +54,7 @@ export const useUser = () => {
         const { displayName, photoURL, uid, email } = _user;
         setNickname(displayName);
         setUserInfo({ displayName, photoURL, uid, email });
-        addUser({ displayName, photoURL, uid, email });
+        // addUser({ displayName, photoURL, uid, email });
       });
     }
   });

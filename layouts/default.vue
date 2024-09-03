@@ -45,16 +45,16 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-const getUserList = async () => {
-  const { data: users } = await useAsyncData("getUserList", () =>
-    $fetch("/api/user")
-  );
-  if (users.value) {
-    setUserList(users.value);
-  }
-};
+// const getUserList = async () => {
+//   const { data: users } = await useAsyncData("getUserList", () =>
+//     $fetch("/api/user")
+//   );
+//   if (users.value) {
+//     setUserList(users.value);
+//   }
+// };
 
-getUserList();
+// getUserList();
 
 // const { user } = useUser();
 

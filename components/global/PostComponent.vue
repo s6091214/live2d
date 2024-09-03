@@ -182,44 +182,44 @@ const handleLike = (id: number) => {
   }
 };
 
-const handleServerLike = async () => {
-  const liked = isLike(props.postData.id);
-  let liked_user = props.postData.liked_user
-    ? [...props.postData.liked_user]
-    : [];
+// const handleServerLike = async () => {
+//   const liked = isLike(props.postData.id);
+//   let liked_user = props.postData.liked_user
+//     ? [...props.postData.liked_user]
+//     : [];
 
-  if (userInfo?.value.uid) {
-    if (liked) {
-      liked_user.push(userInfo.value.uid);
-    } else {
-      liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
-    }
-  }
+//   if (userInfo?.value.uid) {
+//     if (liked) {
+//       liked_user.push(userInfo.value.uid);
+//     } else {
+//       liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
+//     }
+//   }
 
-  const requestData = { ...props.postData, liked_user };
+//   const requestData = { ...props.postData, liked_user };
 
-  const { data: res } = await useAsyncData("postLike", () =>
-    $fetch("/api/meme/like", {
-      method: "POST",
-      body: { ...requestData },
-    })
-  );
+//   const { data: res } = await useAsyncData("postLike", () =>
+//     $fetch("/api/meme/like", {
+//       method: "POST",
+//       body: { ...requestData },
+//     })
+//   );
 
-  // console.log(res.value);
+//   // console.log(res.value);
 
-  if (res.value) {
-    const { status } = res.value;
-    if (!status) {
-      const { data: putRes } = await useAsyncData("postLikePut", () =>
-        $fetch("/api/meme/update", {
-          method: "PUT",
-          body: { ...requestData },
-        })
-      );
-      // console.log(putRes.value.status);
-    }
-  }
-};
+//   if (res.value) {
+//     const { status } = res.value;
+//     if (!status) {
+//       const { data: putRes } = await useAsyncData("postLikePut", () =>
+//         $fetch("/api/meme/update", {
+//           method: "PUT",
+//           body: { ...requestData },
+//         })
+//       );
+//       // console.log(putRes.value.status);
+//     }
+//   }
+// };
 
 const pressLike = () => {
   if (!isLogin.value) {
@@ -229,7 +229,7 @@ const pressLike = () => {
   }
   if (props.postData) {
     handleLike(props.postData.id);
-    handleServerLike();
+    // handleServerLike();
   }
 };
 </script>
