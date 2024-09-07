@@ -88,7 +88,6 @@
               native-type="button"
               class="w-[120px]"
               @click="loginWithGoogle"
-              disabled
             >
               跳轉
             </el-button>

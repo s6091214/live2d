@@ -9,7 +9,7 @@ export const useUserStore = defineStore("user", () => {
 
   const cookieLikeIdList = useCookie("likeIdList");
 
-  const userList = ref([]);
+  const userList = ref([] as UserType[]);
 
   const userInfo = ref({} as UserType);
 

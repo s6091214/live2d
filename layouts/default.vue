@@ -45,18 +45,9 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-// const getUserList = async () => {
-//   const { data: users } = await useAsyncData("getUserList", () =>
-//     $fetch("/api/user")
-//   );
-//   if (users.value) {
-//     setUserList(users.value);
-//   }
-// };
+const { user, getUserList } = useUser();
 
-// getUserList();
-
-// const { user } = useUser();
+getUserList();
 
 onMounted(async () => {
   window.addEventListener("scroll", () => {
