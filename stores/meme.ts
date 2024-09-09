@@ -6,10 +6,15 @@ export const useMemeStore = defineStore("meme", () => {
 
   const memeList = computed(() => memes.value);
   const hotMemesList = computed(() => {
-    const list = hotMemes.value.filter((meme) => meme.id);
+    const list = hotMemes.value
+      .filter((meme) => meme.id)
+      .map((memeData) => ({
+        ...memeData,
+        created_date: memeData.created_date,
+      }));
     return list.sort((a: MemePost, b: MemePost) => {
-      const timestampA = a.created_at?.timestamp || 0;
-      const timestampB = b.created_at?.timestamp || 0;
+      const timestampA = new Date(a.created_date).getTime() || 0;
+      const timestampB = new Date(b.created_date).getTime() || 0;
       return timestampB - timestampA;
     });
   });
@@ -45,15 +50,17 @@ export const useMemeStore = defineStore("meme", () => {
           const memes = filterArray.map((content) => {
             const meme = {
               ...content,
+              memeId: content.id,
               tags: content.hashtag
                 ? content.hashtag.split(" ").map((tag, index) => ({
                     title: tag,
                     id: `meme${content.id}-tag${index}`,
                   }))
                 : [],
-              created_at_f: content.created_at?.date_time_string
-                ? content.created_at.date_time_string.split(" ")[0]
+              created_date: content.created_at?.date_time_string
+                ? content.created_at.date_time_string
                 : "",
+              liked_user: [],
             };
             return meme;
           });

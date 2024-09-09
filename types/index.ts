@@ -6,14 +6,17 @@ export type UserType = {
 };
 
 export type MemePost = {
-  _id: string;
-  created_at: { _id: string; date_time_string: string; timestamp: number };
-  hashtag: string;
+  // _id: string;
   id: number;
-  pageview: number;
-  src: string;
-  tags: [] | { id: string; title: string }[];
   title: string;
-  total_like_count: number;
+  src: string;
   url: string;
+  memeId: number;
+  pageview: number;
+  total_like_count: number;
+  tags: [] | { id: string; title: string }[];
+  liked_user: string[];
+  created_date: string;
+  created_at?: { _id: string; date_time_string: string; timestamp: number };
+  hashtag?: string;
 };

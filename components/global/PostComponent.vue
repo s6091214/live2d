@@ -6,7 +6,7 @@
   >
     <!-- article header -->
     <div class="flex items-center text-white py-3">
-      <span>{{ postData.created_at_f }}</span>
+      <span>{{ postData.created_date }}</span>
     </div>
     <!-- 文章圖片 -->
     <div class="w-full max-w-full flex items-center">
@@ -34,7 +34,7 @@
             <img
               class="w-[24px] h-[24px]"
               :class="{
-                grayscale: !isLike(postData.id),
+                grayscale: !isLike(postData.memeId),
               }"
               src="../../public/heart-like-con.svg"
               alt=""
@@ -54,10 +54,10 @@
       </div>
       <!-- TODO: 按讚列表 -->
       <!-- TODO: tags -->
-      <div class="flex flex-wrap gap-2 pt-[0.5rem]" v-if="postData.tags">
+      <div class="flex flex-wrap gap-2 pt-[0.5rem]">
         <el-tag
           type="danger"
-          v-for="tag in postData.tags"
+          v-for="tag in showTags"
           :key="tag.id"
           effect="dark"
           round
@@ -128,12 +128,16 @@
 
 <script lang="ts" setup>
 type postItem = {
-  created_at_f: string;
-  title: string;
-  src: string;
-  tags?: { id: string; title: string }[];
   id: number;
-  liked_user?: string[];
+  title: string;
+  url: string;
+  src: string;
+  memeId: number;
+  pageview: number;
+  total_like_count: number;
+  tags: { title: string; id: number }[] | string;
+  liked_user: string[];
+  created_date: string;
 };
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
@@ -145,7 +149,23 @@ const userStore = useUserStore();
 const { savaLikeIdList } = userStore;
 const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
+const memeStore = useMemeStore();
+const { hotMemesList } = storeToRefs(memeStore);
+
 const props = defineProps<{ postData: postItem }>();
+
+const showTags = computed(() => {
+  if (props.postData?.tags) {
+    const tags = props.postData.tags;
+    if (typeof tags === "object") return tags;
+    else if (typeof tags === "string") {
+      try {
+        return JSON.parse(tags);
+      } catch (error) {}
+    }
+  }
+  return [];
+});
 
 const routes = useRoute();
 
@@ -182,44 +202,70 @@ const handleLike = (id: number) => {
   }
 };
 
-// const handleServerLike = async () => {
-//   const liked = isLike(props.postData.id);
-//   let liked_user = props.postData.liked_user
-//     ? [...props.postData.liked_user]
-//     : [];
+const addHotMemes = async () => {
+  const liked = isLike(props.postData.memeId);
+  let liked_user = props.postData.liked_user
+    ? [...props.postData.liked_user]
+    : [];
 
-//   if (userInfo?.value.uid) {
-//     if (liked) {
-//       liked_user.push(userInfo.value.uid);
-//     } else {
-//       liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
-//     }
-//   }
+  if (userInfo?.value.uid) {
+    if (liked) {
+      liked_user.push(userInfo.value.uid);
+    } else {
+      liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
+    }
+  }
 
-//   const requestData = { ...props.postData, liked_user };
+  const {
+    title,
+    url,
+    src,
+    memeId,
+    pageview,
+    total_like_count,
+    tags,
+    created_date,
+  } = props.postData;
 
-//   const { data: res } = await useAsyncData("postLike", () =>
-//     $fetch("/api/meme/like", {
-//       method: "POST",
-//       body: { ...requestData },
-//     })
-//   );
+  const requestData = {
+    title,
+    url,
+    src,
+    memeId,
+    pageview,
+    total_like_count,
+    tags,
+    created_date,
+    liked_user,
+  };
 
-//   // console.log(res.value);
+  // console.log(requestData);
 
-//   if (res.value) {
-//     const { status } = res.value;
-//     if (!status) {
-//       const { data: putRes } = await useAsyncData("postLikePut", () =>
-//         $fetch("/api/meme/update", {
-//           method: "PUT",
-//           body: { ...requestData },
-//         })
-//       );
-//       // console.log(putRes.value.status);
-//     }
-//   }
-// };
+  const { data: res } = await useAsyncData("postLike", () =>
+    $fetch(
+      "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes",
+      {
+        method: "POST",
+        body: { ...requestData },
+      }
+    )
+  );
+
+  console.log(res.value);
+
+  /** mongodb /api/meme/like */
+  // if (res.value) {
+  //   const { status } = res.value;
+  //   if (!status) {
+  //     const { data: putRes } = await useAsyncData("postLikePut", () =>
+  //       $fetch("/api/meme/update", {
+  //         method: "PUT",
+  //         body: { ...requestData },
+  //       })
+  //     );
+  //   }
+  // }
+};
 
 const pressLike = () => {
   if (!isLogin.value) {
@@ -228,8 +274,11 @@ const pressLike = () => {
     return;
   }
   if (props.postData) {
-    handleLike(props.postData.id);
-    // handleServerLike();
+    handleLike(props.postData.memeId);
+    const hotIds = hotMemesList.value.map((meme) => meme.memeId);
+    if (!hotIds.includes(props.postData.memeId)) {
+      addHotMemes();
+    }
   }
 };
 </script>
