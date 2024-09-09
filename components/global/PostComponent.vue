@@ -161,7 +161,9 @@ const showTags = computed(() => {
     else if (typeof tags === "string") {
       try {
         return JSON.parse(tags);
-      } catch (error) {}
+      } catch (error) {
+        return [];
+      }
     }
   }
   return [];

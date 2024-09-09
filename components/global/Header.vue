@@ -6,7 +6,7 @@
         : 'bg-[#000]'
     }`"
   >
-    <h1 class="font-bold py-1 text-[0px]">
+    <h1 class="font-bold py-1 pr-3 text-[0px]">
       <router-link
         to="/"
         class="w-full h-full text-white text-4xl hover:text-white"
@@ -27,8 +27,10 @@
           :class="[
             `${page.href === onRoutes ? 'text-yellow-500' : 'text-white'}`,
           ]"
+          v-show="deviceName === 'unknown' || page.diveice === 'all'"
         >
-          <span class="font-pop">{{ page.name }}</span>
+          <span class="font-pop hidden sm:inline-block">{{ page.name }}</span>
+          <img class="sm:hidden w-[30px]" :src="`/${page.icon}`" alt="icon" />
         </NuxtLink>
       </li>
     </ul>
@@ -77,6 +79,8 @@
 </template>
 
 <script setup>
+import deviceName from "../../util/mobileDetective";
+
 const props = defineProps({
   scrollOver: Boolean,
 });
@@ -98,14 +102,20 @@ const routeList = reactive([
   {
     href: "/",
     name: "首頁",
+    diveice: "pc",
+    icon: "home.svg",
   },
   {
     href: "/PersonSpace",
     name: "個人空間",
+    diveice: "all",
+    icon: "space.svg",
   },
   {
     href: "/HotMeme",
     name: "熱門迷因",
+    diveice: "all",
+    icon: "hot.svg",
   },
 ]);
 
