@@ -1,7 +1,7 @@
 import { getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin(async () => {
   const config = useRuntimeConfig();
   let auth = null;
 
@@ -23,8 +23,8 @@ export default defineNuxtPlugin(() => {
       measurementId,
     };
     try {
-      initializeApp(firebaseConfig as any);
-      auth = getAuth();
+      const app = await initializeApp(firebaseConfig as any);
+      auth = getAuth(app);
     } catch (error) {
       console.log(`firebase init error： ${error}`);
     }
