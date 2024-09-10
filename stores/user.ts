@@ -49,28 +49,28 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const loginWithGoogle = async () => {
-    if (import.meta.client) {
-      const { $auth } = useNuxtApp();
-      console.log($auth);
-
-      if ($auth) {
-        try {
-          await signInWithRedirect($auth as Auth, new GoogleAuthProvider());
-        } catch (error) {
-          console.error("Error during Google login:", error);
-        }
-      } else {
-        console.error("Firebase Auth not initialized");
+    const { $auth } = useNuxtApp();
+    if ($auth) {
+      try {
+        await signInWithRedirect($auth as Auth, new GoogleAuthProvider());
+      } catch (error) {
+        console.error("Error during Google login:", error);
       }
     } else {
-      console.error("This function can only be called on the client");
+      console.error("Firebase Auth not initialized");
     }
   };
 
   const logoutFromGoogle = async () => {
     const { $auth } = useNuxtApp();
     if ($auth) {
-      await signOut($auth as Auth);
+      try {
+        await signOut($auth as Auth);
+      } catch (error) {
+        console.error("Error during Google login:", error);
+      }
+    } else {
+      console.error("Firebase Auth not initialized");
     }
   };
 
