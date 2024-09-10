@@ -1,8 +1,7 @@
 <template>
   <div
     v-if="postData"
-    class="max-w-full mx-auto pb-[20px] border-b border-gray-400"
-    style="width: min(470px, 100vw)"
+    class="max-w-[470px] w-full mx-auto pb-[20px] border-b border-gray-400"
   >
     <!-- article header -->
     <div class="flex items-center text-white py-3">

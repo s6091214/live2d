@@ -1,4 +1,5 @@
-import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
+import { signInWithRedirect, signOut, GoogleAuthProvider } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 
 export const useUserStore = defineStore("user", () => {
   const nickname = ref("");
@@ -48,16 +49,28 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const loginWithGoogle = async () => {
-    const { $auth } = useNuxtApp();
-    if ($auth) {
-      await signInWithPopup($auth, new GoogleAuthProvider());
+    if (import.meta.client) {
+      const { $auth } = useNuxtApp();
+      console.log($auth);
+
+      if ($auth) {
+        try {
+          await signInWithRedirect($auth as Auth, new GoogleAuthProvider());
+        } catch (error) {
+          console.error("Error during Google login:", error);
+        }
+      } else {
+        console.error("Firebase Auth not initialized");
+      }
+    } else {
+      console.error("This function can only be called on the client");
     }
   };
 
   const logoutFromGoogle = async () => {
     const { $auth } = useNuxtApp();
     if ($auth) {
-      await signOut($auth);
+      await signOut($auth as Auth);
     }
   };
 

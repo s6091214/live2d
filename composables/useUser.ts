@@ -1,4 +1,5 @@
 import { onIdTokenChanged } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 
 interface ApiResponse {
   data: UserType[];
@@ -70,7 +71,7 @@ export const useUser = () => {
     const { $auth } = useNuxtApp();
     initialLoad.value = false;
     if ($auth) {
-      unsubscribe = onIdTokenChanged($auth, async (_user) => {
+      unsubscribe = onIdTokenChanged($auth as Auth, async (_user) => {
         if (!_user || !_user.uid) {
           user.value = null;
           return;
