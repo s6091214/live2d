@@ -33,7 +33,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       try {
         const app = initializeApp(firebaseConfig);
         auth = getAuth(app);
-        console.log("Firebase initialized:", auth);
+        console.log("Firebase initialized");
         nuxtApp.provide("auth", auth);
       } catch (error) {
         console.error(`Firebase init error: ${JSON.stringify(error, null, 2)}`);

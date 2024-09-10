@@ -1,4 +1,4 @@
-import { signInWithRedirect, signOut, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
 import type { Auth } from "firebase/auth";
 
 export const useUserStore = defineStore("user", () => {
@@ -52,7 +52,7 @@ export const useUserStore = defineStore("user", () => {
     const { $auth } = useNuxtApp();
     if ($auth) {
       try {
-        await signInWithRedirect($auth as Auth, new GoogleAuthProvider());
+        await signInWithPopup($auth as Auth, new GoogleAuthProvider());
       } catch (error) {
         console.error("Error during Google login:", error);
       }
@@ -66,6 +66,7 @@ export const useUserStore = defineStore("user", () => {
     if ($auth) {
       try {
         await signOut($auth as Auth);
+        console.log("you have logouted from auth");
       } catch (error) {
         console.error("Error during Google login:", error);
       }

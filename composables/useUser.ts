@@ -67,9 +67,10 @@ export const useUser = () => {
     return false;
   };
 
-  onMounted(async () => {
+  onMounted(() => {
     const { $auth } = useNuxtApp();
     initialLoad.value = false;
+    console.log($auth);
     if ($auth) {
       unsubscribe = onIdTokenChanged($auth as Auth, async (_user) => {
         if (!_user || !_user.uid) {
