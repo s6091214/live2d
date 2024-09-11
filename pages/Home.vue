@@ -153,11 +153,9 @@ if (deviceName === "unknown") {
   });
 }
 
-onMounted(() => {
-  if (!memeList.value.length) {
-    getMemeList();
-  }
-});
+if (!memeList.value.length) {
+  getMemeList();
+}
 </script>
 
 <style scoped>

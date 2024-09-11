@@ -51,8 +51,11 @@ const initialStore = useInitialStore();
 const { handleSignDialog } = initialStore;
 const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
-const userStore = useUserStore();
-const { setUserList } = userStore;
+const memeStore = useMemeStore();
+const { getMemeList, getHotMeme } = memeStore;
+
+getMemeList();
+getHotMeme();
 
 const scrollOver = ref(false);
 

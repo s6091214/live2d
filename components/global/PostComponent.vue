@@ -139,6 +139,12 @@ type postItem = {
   created_date: string;
 };
 
+interface ApiResponse {
+  data: postItem;
+  success?: string;
+  error?: string;
+}
+
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
 const initialStore = useInitialStore();
@@ -150,6 +156,13 @@ const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
 const { hotMemesList } = storeToRefs(memeStore);
+
+const hotMemeIds = computed(() => {
+  if (hotMemesList?.value) {
+    return hotMemesList.value.map((meme) => meme.memeId);
+  }
+  return [];
+});
 
 const props = defineProps<{ postData: postItem }>();
 
@@ -203,6 +216,19 @@ const handleLike = (id: number) => {
   }
 };
 
+const putMemeData = async (request) => {
+  const { memeId } = request;
+  if (memeId) {
+    $fetch(
+      `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
+      {
+        method: "PUT",
+        body: { ...request },
+      }
+    );
+  }
+};
+
 const addHotMemes = async () => {
   const liked = isLike(props.postData.memeId);
   let liked_user = props.postData.liked_user
@@ -242,7 +268,13 @@ const addHotMemes = async () => {
 
   // console.log(requestData);
 
-  const { data: res } = await useAsyncData("postLike", () =>
+  const isExist = hotMemeIds.value.includes(props.postData.memeId);
+  if (isExist) {
+    putMemeData(requestData);
+    return;
+  }
+
+  const { data: res } = await useAsyncData<ApiResponse>("postLike", () =>
     $fetch(
       "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes",
       {
@@ -252,20 +284,11 @@ const addHotMemes = async () => {
     )
   );
 
-  console.log(res.value);
+  // console.log(res.value);
 
-  /** mongodb /api/meme/like */
-  // if (res.value) {
-  //   const { status } = res.value;
-  //   if (!status) {
-  //     const { data: putRes } = await useAsyncData("postLikePut", () =>
-  //       $fetch("/api/meme/update", {
-  //         method: "PUT",
-  //         body: { ...requestData },
-  //       })
-  //     );
-  //   }
-  // }
+  if (res.value == null) {
+    putMemeData(requestData);
+  }
 };
 
 const pressLike = () => {
@@ -276,10 +299,7 @@ const pressLike = () => {
   }
   if (props.postData) {
     handleLike(props.postData.memeId);
-    const hotIds = hotMemesList.value.map((meme) => meme.memeId);
-    if (!hotIds.includes(props.postData.memeId)) {
-      addHotMemes();
-    }
+    addHotMemes();
   }
 };
 </script>

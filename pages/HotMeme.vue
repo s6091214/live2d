@@ -7,6 +7,7 @@
         v-for="content in hotMemesList"
         :key="content.id"
         :postData="content"
+        @updateList="refresh"
       />
     </div>
   </div>
@@ -37,7 +38,7 @@ const { data: memes, refresh } = await useAsyncData<ApiResponse>(
 
 setLoading(false);
 
-if (memes.value.data) {
+if (memes.value?.data) {
   setHotMeme(memes.value.data);
 }
 </script>
