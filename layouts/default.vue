@@ -52,10 +52,32 @@ const { handleSignDialog } = initialStore;
 const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
-const { getMemeList, getHotMeme } = memeStore;
+const { likeIdList, hotMemesList } = storeToRefs(memeStore);
+const { getMemeList, getHotMeme, savaLikeIdList } = memeStore;
+
+const userStore = useUserStore();
+const { googleUid } = storeToRefs(userStore);
 
 getMemeList();
 getHotMeme();
+
+watch(googleUid, async (uid) => {
+  if (uid && uid !== "" && hotMemesList?.value.length) {
+    let additional = [];
+    hotMemesList.value.map((meme) => {
+      let parseLikeList = [];
+      try {
+        parseLikeList = JSON.parse(meme.liked_user);
+      } catch (error) {}
+      if (parseLikeList.length && parseLikeList.includes(uid)) {
+        additional.push(meme.memeId);
+      }
+      return meme;
+    });
+    const newLikeList = [...new Set([...likeIdList.value].concat(additional))];
+    savaLikeIdList(newLikeList);
+  }
+});
 
 const scrollOver = ref(false);
 

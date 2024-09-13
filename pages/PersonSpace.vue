@@ -5,7 +5,7 @@
     <div class="w-full" v-if="isLogin">
       <PostComponent
         v-for="content in filterLikes"
-        :key="content.id"
+        :key="content.memeId"
         :postData="content"
       />
     </div>
@@ -15,46 +15,44 @@
 <script lang="ts" setup>
 const memeStore = useMemeStore();
 const { getMemeList } = memeStore;
-const { memeList, hotMemesList } = storeToRefs(memeStore);
+const { memeList, hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
-const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
-
-const googleUid = computed(() => {
-  if (isGoogleLogin) {
-    return userInfo.value.uid;
-  }
-  return null;
-});
+const { isLogin, googleUid } = storeToRefs(userStore);
 
 const filterLikes = computed(() => {
-  let result = [];
+  let resultArray = [];
+  let additional = [];
   if (likeIdList?.value) {
     if (memeList?.value) {
-      result = [...memeList.value].filter((item) =>
-        likeIdList.value.includes(item.id)
-      );
-    }
-    if (hotMemesList?.value && isGoogleLogin) {
-      let addList = [];
-      hotMemesList.value.map((meme) => {
-        let parseLikeList = [];
-        try {
-          parseLikeList = JSON.parse(meme.liked_user);
-        } catch (error) {}
-        if (
-          parseLikeList.length &&
-          parseLikeList.includes(googleUid.value) &&
-          !likeIdList.value.includes(meme.id)
-        ) {
-          addList.push(meme);
-        }
-        return meme;
+      // console.log(memeList.value, likeIdList.value);
+      resultArray = [...memeList.value].filter((item) => {
+        const isLike = likeIdList.value.includes(item.id);
+        return isLike;
       });
-      result = result.concat(addList);
+    }
+    if (hotMemesList?.value && googleUid.value) {
+      additional = [...hotMemesList.value].filter((item) => {
+        const isLike = likeIdList.value.includes(item.memeId);
+        return isLike;
+      });
     }
   }
-  return result;
+
+  if (additional.length) {
+    const combinedArray = [...resultArray, ...additional];
+    const uniqueByMemeId = combinedArray
+      .reduce((acc, item) => {
+        // 確保每個 memeId 只有一個物件
+        if (!acc.has(item.memeId)) {
+          acc.set(item.memeId, item);
+        }
+        return acc;
+      }, new Map())
+      .values();
+    return [...uniqueByMemeId];
+  }
+  return resultArray;
 });
 
 if (!memeList.value.length) {

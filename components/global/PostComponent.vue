@@ -145,17 +145,22 @@ interface ApiResponse {
   error?: string;
 }
 
+interface UpdateApiResponse {
+  success?: string;
+  error?: string;
+}
+
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
-const { savaLikeIdList } = userStore;
-const { isLogin, likeIdList, isGoogleLogin, userInfo } = storeToRefs(userStore);
+const { isLogin, isGoogleLogin, userInfo } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
-const { hotMemesList } = storeToRefs(memeStore);
+const { getHotMeme, savaLikeIdList } = memeStore;
+const { hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const hotMemeIds = computed(() => {
   if (hotMemesList?.value) {
@@ -219,13 +224,20 @@ const handleLike = (id: number) => {
 const putMemeData = async (request) => {
   const { memeId } = request;
   if (memeId) {
-    $fetch(
-      `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
-      {
-        method: "PUT",
-        body: { ...request },
-      }
+    const { data: res } = await useAsyncData<UpdateApiResponse>(
+      "updateMeme",
+      () =>
+        $fetch(
+          `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
+          {
+            method: "PUT",
+            body: { ...request },
+          }
+        )
     );
+    if (res.value.success) {
+      getHotMeme();
+    }
   }
 };
 
@@ -270,11 +282,11 @@ const addHotMemes = async () => {
 
   const isExist = hotMemeIds.value.includes(props.postData.memeId);
   if (isExist) {
-    putMemeData(requestData);
+    if (isGoogleLogin.value) putMemeData(requestData);
     return;
   }
 
-  const { data: res } = await useAsyncData<ApiResponse>("postLike", () =>
+  const { data: res } = await useAsyncData<ApiResponse>("createMeme", () =>
     $fetch(
       "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes",
       {
@@ -286,7 +298,12 @@ const addHotMemes = async () => {
 
   // console.log(res.value);
 
-  if (res.value == null) {
+  if (res.value) {
+    getHotMeme();
+    return;
+  }
+
+  if (res.value === null) {
     putMemeData(requestData);
   }
 };

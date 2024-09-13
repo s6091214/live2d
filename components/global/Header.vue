@@ -86,9 +86,11 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-const { setNickname, savaLikeIdList, setUserInfo, logoutFromGoogle } =
-  userStore;
+const { setNickname, setUserInfo, logoutFromGoogle } = userStore;
 const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
+
+const memeStore = useMemeStore();
+const { savaLikeIdList } = memeStore;
 
 const emit = defineEmits(["close", "openUserDialog"]);
 
@@ -122,7 +124,7 @@ const routeList = reactive([
 const logout = () => {
   setNickname("");
   savaLikeIdList([]);
-  if (isGoogleLogin) {
+  if (isGoogleLogin.value) {
     logoutFromGoogle();
     setUserInfo({
       displayName: "",

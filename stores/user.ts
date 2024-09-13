@@ -4,11 +4,7 @@ import type { Auth } from "firebase/auth";
 export const useUserStore = defineStore("user", () => {
   const nickname = ref("");
 
-  const likeIdList: Ref<number[]> = ref([]);
-
   const cookieNickname = useCookie("nickname");
-
-  const cookieLikeIdList = useCookie("likeIdList");
 
   const userList = ref([] as UserType[]);
 
@@ -40,13 +36,12 @@ export const useUserStore = defineStore("user", () => {
     return false;
   });
 
-  const savaLikeIdList = (payload: number | number[]) => {
-    let newList = [...likeIdList.value];
-    if (typeof payload === "number") newList.push(payload);
-    else newList = payload;
-    likeIdList.value = newList;
-    cookieLikeIdList.value = newList.join(",");
-  };
+  const googleUid = computed(() => {
+    if (isGoogleLogin.value) {
+      return userInfo.value.uid;
+    }
+    return null;
+  });
 
   const loginWithGoogle = async () => {
     const { $auth } = useNuxtApp();
@@ -79,29 +74,17 @@ export const useUserStore = defineStore("user", () => {
     if (cookieNickname?.value) {
       nickname.value = cookieNickname.value;
     }
-    if (cookieLikeIdList?.value) {
-      const cookie = cookieLikeIdList.value.toString();
-      const saveData = cookie.split(",");
-      likeIdList.value = saveData.map((item) => {
-        try {
-          return Number(item);
-        } catch (error) {
-          return 0;
-        }
-      });
-    }
   });
 
   return {
     nickname,
-    likeIdList,
     userInfo,
     isLogin,
     isGoogleLogin,
+    googleUid,
     userList,
     setUserInfo,
     setNickname,
-    savaLikeIdList,
     setUserList,
     loginWithGoogle,
     logoutFromGoogle,

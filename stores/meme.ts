@@ -14,7 +14,6 @@ export const useMemeStore = defineStore("meme", () => {
       .filter((meme) => meme.id)
       .map((memeData) => ({
         ...memeData,
-        created_date: memeData.created_date,
       }));
     return list.sort((a: MemePost, b: MemePost) => {
       const timestampA = new Date(a.created_date).getTime() || 0;
@@ -22,6 +21,18 @@ export const useMemeStore = defineStore("meme", () => {
       return timestampB - timestampA;
     });
   });
+
+  const likeIdList: Ref<number[]> = ref([]);
+
+  const cookieLikeIdList = useCookie("likeIdList");
+
+  const savaLikeIdList = (payload: number | number[]) => {
+    let newList = [...likeIdList.value];
+    if (typeof payload === "number") newList.push(payload);
+    else newList = payload;
+    likeIdList.value = newList;
+    cookieLikeIdList.value = newList.join(",");
+  };
 
   const setMemeList = (list) => {
     if (list && list.length) {
@@ -92,12 +103,28 @@ export const useMemeStore = defineStore("meme", () => {
     }
   };
 
+  onMounted(() => {
+    if (cookieLikeIdList?.value) {
+      const cookie = cookieLikeIdList.value.toString();
+      const saveData = cookie.split(",");
+      likeIdList.value = saveData.map((item) => {
+        try {
+          return Number(item);
+        } catch (error) {
+          return 0;
+        }
+      });
+    }
+  });
+
   return {
     memeList,
     hotMemesList,
+    likeIdList,
     setMemeList,
     getMemeList,
     setHotMeme,
     getHotMeme,
+    savaLikeIdList,
   };
 });

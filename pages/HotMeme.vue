@@ -7,7 +7,6 @@
         v-for="content in hotMemesList"
         :key="content.id"
         :postData="content"
-        @updateList="refresh"
       />
     </div>
   </div>
