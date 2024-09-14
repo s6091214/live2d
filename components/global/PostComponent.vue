@@ -28,7 +28,6 @@
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
             @click="pressLike"
-            v-if="onRoutes !== '/HotMeme'"
           >
             <img
               class="w-[24px] h-[24px]"
@@ -135,7 +134,7 @@ type postItem = {
   pageview: number;
   total_like_count: number;
   tags: { title: string; id: number }[] | string;
-  liked_user: string[];
+  liked_user: string[] | string;
   created_date: string;
 };
 
@@ -156,7 +155,7 @@ const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
-const { isLogin, isGoogleLogin, userInfo } = storeToRefs(userStore);
+const { isLogin, isGoogleLogin, googleUid } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
 const { getHotMeme, savaLikeIdList } = memeStore;
@@ -184,12 +183,6 @@ const showTags = computed(() => {
     }
   }
   return [];
-});
-
-const routes = useRoute();
-
-const onRoutes = computed(() => {
-  return routes.path;
 });
 
 const showCommentBlock = ref(false);
@@ -243,28 +236,21 @@ const putMemeData = async (request) => {
 
 const addHotMemes = async () => {
   const liked = isLike(props.postData.memeId);
-  let liked_user = props.postData.liked_user
-    ? [...props.postData.liked_user]
-    : [];
+  let liked_user = [];
+  try {
+    if (typeof props.postData.liked_user === "string")
+      liked_user = JSON.parse(typeof props.postData.liked_user);
+  } catch (error) {}
 
-  if (userInfo?.value.uid) {
+  if (googleUid?.value) {
+    liked_user = liked_user.filter((item) => item !== googleUid.value);
     if (liked) {
-      liked_user.push(userInfo.value.uid);
-    } else {
-      liked_user = liked_user.filter((item) => item !== userInfo.value.uid);
+      liked_user.push(googleUid.value);
     }
   }
 
-  const {
-    title,
-    url,
-    src,
-    memeId,
-    pageview,
-    total_like_count,
-    tags,
-    created_date,
-  } = props.postData;
+  const { title, url, src, memeId, pageview, total_like_count, created_date } =
+    props.postData;
 
   const requestData = {
     title,
@@ -273,8 +259,8 @@ const addHotMemes = async () => {
     memeId,
     pageview,
     total_like_count,
-    tags,
     created_date,
+    tags: showTags.value,
     liked_user,
   };
 
