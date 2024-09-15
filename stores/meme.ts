@@ -6,6 +6,7 @@ interface ApiResponse {
 export const useMemeStore = defineStore("meme", () => {
   let memes = ref([]);
   let hotMemes = ref([]);
+  const memePage = ref(0);
 
   const memeList = computed(() => memes.value);
 
@@ -80,12 +81,15 @@ export const useMemeStore = defineStore("meme", () => {
         setMemeList(memes);
       }
     }
+    if (memePage.value === page) return false;
+    memePage.value = page;
     const { data: memes } = await useAsyncData<ApiResponse>("getMemeList", () =>
       $fetch(`https://memes.tw/wtf/api?page=${page}`)
     );
     if (memes.value) {
       dataFormater(memes.value);
     }
+    return true;
   };
 
   const getHotMeme = async () => {

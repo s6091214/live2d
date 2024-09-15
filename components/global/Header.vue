@@ -6,6 +6,7 @@
         : 'bg-[#000]'
     }`"
   >
+    <!-- TODO: LOGO -->
     <h1 class="font-bold py-1 pr-3 text-[0px]">
       <router-link
         to="/"
@@ -19,6 +20,7 @@
         />
       </router-link>
     </h1>
+    <!-- TODO: 中間分頁按紐 -->
     <ul class="flex-1 flex items-center">
       <li v-for="page in routeList" :key="page.name">
         <NuxtLink
@@ -34,52 +36,72 @@
         </NuxtLink>
       </li>
     </ul>
-    <div class="flex items-center" v-if="!isLogin">
-      <button
-        class="hidden md:inline-block p-0 bg-transparent border-none focus:outline-none"
-        @click="emit('openUserDialog')"
+    <!-- TODO: 右邊操作 -->
+    <div class="flex items-center">
+      <div class="hidden md:flex justify-center items-center">
+        <button class="btn-reset pr-2" @click="memeRefesh(true)">
+          重置迷因
+        </button>
+        <button
+          type="button"
+          class="btn-reset pr-2 text-3xl flex justify-center items-center"
+          @click="memeRefesh(false)"
+        >
+          <el-icon
+            :class="memeRefreshing ? 'animate-spin' : ''"
+            style="animation-iteration-count: 1"
+            ><RefreshRight
+          /></el-icon>
+        </button>
+      </div>
+      <div v-if="!isLogin">
+        <button
+          class="hidden md:inline-block p-0 bg-transparent border-none focus:outline-none"
+          @click="emit('openUserDialog')"
+        >
+          <el-icon color="white" size="30px" style="vertical-align: -10%">
+            <UserFilled />
+          </el-icon>
+        </button>
+      </div>
+      <router-link
+        to="/Login"
+        v-if="!isLogin"
+        class="flex items-center md:hidden"
       >
         <el-icon color="white" size="30px" style="vertical-align: -10%">
           <UserFilled />
         </el-icon>
-      </button>
-    </div>
-    <router-link
-      to="/Login"
-      v-if="!isLogin"
-      class="flex items-center md:hidden"
-    >
-      <el-icon color="white" size="30px" style="vertical-align: -10%">
-        <UserFilled />
-      </el-icon>
-    </router-link>
-    <div class="flex items-center" v-else>
-      <div v-if="isGoogleLogin" class="text-white text-xl flex items-center">
-        <img
-          class="w-[45px] rounded-[50%]"
-          v-if="userInfo?.photoURL"
-          :src="userInfo.photoURL"
-          alt="headshot"
-        />
-        <span class="px-2">{{ userInfo.displayName }}</span>
+      </router-link>
+      <div class="flex items-center" v-else>
+        <div v-if="isGoogleLogin" class="text-white text-xl flex items-center">
+          <img
+            class="w-[45px] rounded-[50%]"
+            v-if="userInfo?.photoURL"
+            :src="userInfo.photoURL"
+            alt="headshot"
+          />
+          <span class="px-2">{{ userInfo.displayName }}</span>
+        </div>
+        <span v-else class="text-white pr-2 text-xl leading-[30px]"
+          >{{ nickname }}(遊客)</span
+        >
+        <button
+          class="p-0 bg-transparent border-none outline-none"
+          @click="logout"
+        >
+          <el-icon color="tomato" size="30px" style="vertical-align: -10%">
+            <RemoveFilled />
+          </el-icon>
+        </button>
       </div>
-      <span v-else class="text-white pr-2 text-xl leading-[30px]"
-        >{{ nickname }}(遊客)</span
-      >
-      <button
-        class="p-0 bg-transparent border-none outline-none"
-        @click="logout"
-      >
-        <el-icon color="tomato" size="30px" style="vertical-align: -10%">
-          <RemoveFilled />
-        </el-icon>
-      </button>
     </div>
   </header>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import deviceName from "../../util/mobileDetective";
+import randomNumber from "~/util/randomNumber";
 
 const props = defineProps({
   scrollOver: Boolean,
@@ -90,7 +112,7 @@ const { setNickname, setUserInfo, logoutFromGoogle } = userStore;
 const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
-const { savaLikeIdList } = memeStore;
+const { savaLikeIdList, getMemeList } = memeStore;
 
 const emit = defineEmits(["close", "openUserDialog"]);
 
@@ -120,6 +142,16 @@ const routeList = reactive([
     icon: "hot.svg",
   },
 ]);
+
+const memeRefreshing = ref(false);
+
+const memeRefesh = (reset: boolean) => {
+  if (!reset) memeRefreshing.value = true;
+  const page = reset ? 1 : randomNumber(1, 10);
+  getMemeList(page).then((res) => {
+    if (!reset) memeRefreshing.value = false;
+  });
+};
 
 const logout = () => {
   setNickname("");

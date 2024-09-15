@@ -51,6 +51,12 @@
   }
 }
 
+@layer components {
+  .btn-reset {
+    @apply bg-transparent p-0 border-none hover:border-none focus:outline-none;
+  }
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
