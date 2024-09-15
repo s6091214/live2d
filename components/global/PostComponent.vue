@@ -238,8 +238,15 @@ const addHotMemes = async () => {
   const liked = isLike(props.postData.memeId);
   let liked_user = [];
   try {
-    if (typeof props.postData.liked_user === "string")
-      liked_user = JSON.parse(typeof props.postData.liked_user);
+    switch (typeof props.postData.liked_user) {
+      case "object":
+        liked_user = props.postData.liked_user;
+        break;
+      case "string":
+        liked_user = JSON.parse(props.postData.liked_user);
+      default:
+        break;
+    }
   } catch (error) {}
 
   if (googleUid?.value) {

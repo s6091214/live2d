@@ -2,7 +2,7 @@
   <div class="relative">
     <div class="w-full home-bg min-h-screen">
       <div
-        class="mx-auto w-full px-2 sm:px-0 sm:max-w-[630px] pt-[4rem] pb-[20px] relative z-10 min-h-screen"
+        class="mx-auto w-full px-2 sm:px-0 sm:max-w-[630px] pt-4 md:pt-[4rem] pb-[20px] relative z-10 min-h-screen"
       >
         <!-- TODO: 文章列表 -->
         <PostComponent

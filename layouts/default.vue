@@ -67,7 +67,15 @@ watch(googleUid, async (uid) => {
     hotMemesList.value.map((meme) => {
       let parseLikeList = [];
       try {
-        parseLikeList = JSON.parse(meme.liked_user);
+        switch (typeof meme.liked_user) {
+          case "object":
+            parseLikeList = meme.liked_user;
+            break;
+          case "string":
+            parseLikeList = JSON.parse(meme.liked_user);
+          default:
+            break;
+        }
       } catch (error) {}
       if (parseLikeList.length && parseLikeList.includes(uid)) {
         additional.push(meme.memeId);

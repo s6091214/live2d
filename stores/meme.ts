@@ -44,7 +44,7 @@ export const useMemeStore = defineStore("meme", () => {
     if (list && list.length) hotMemes.value = list;
   };
 
-  const getMemeList = async () => {
+  const getMemeList = async (page: number = 1) => {
     function dataFormater(list) {
       let newList = [];
       const filterString = ["免費救援", "免費援助", "柯文哲被押"];
@@ -81,7 +81,7 @@ export const useMemeStore = defineStore("meme", () => {
       }
     }
     const { data: memes } = await useAsyncData<ApiResponse>("getMemeList", () =>
-      $fetch("https://memes.tw/wtf/api")
+      $fetch(`https://memes.tw/wtf/api?page=${page}`)
     );
     if (memes.value) {
       dataFormater(memes.value);
