@@ -19,4 +19,5 @@ export type MemePost = {
   created_date: string;
   created_at?: { _id: string; date_time_string: string; timestamp: number };
   hashtag?: string;
+  comments?: { name: string; content: string }[];
 };

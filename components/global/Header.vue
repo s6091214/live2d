@@ -38,7 +38,7 @@
     </ul>
     <!-- TODO: 右邊操作 -->
     <div class="flex items-center">
-      <div class="hidden md:flex justify-center items-center">
+      <div class="hidden md:flex justify-center items-center" v-if="isHome">
         <button class="btn-reset pr-2" @click="memeRefesh(true)">
           重置迷因
         </button>
@@ -120,6 +120,17 @@ const routes = useRoute();
 
 const onRoutes = computed(() => {
   return routes.path;
+});
+
+const isHome = computed(() => {
+  switch (onRoutes.value) {
+    case "/":
+    case "/Home":
+      return true;
+
+    default:
+      return false;
+  }
 });
 
 const routeList = reactive([

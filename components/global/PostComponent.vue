@@ -51,6 +51,19 @@
         </div>
       </div>
       <!-- TODO: 按讚列表 -->
+      <div class="flex">
+        <!-- 大頭貼 -->
+        <span></span>
+        <!-- 讚數 -->
+        <el-tooltip placement="top" v-if="fotmatLikedNames.length">
+          <template #content>
+            <span v-html="fotmatLikedNames"></span>
+          </template>
+          <span class="text-white">
+            {{ fotmatLikedNames.length || 0 }}個讚
+          </span>
+        </el-tooltip>
+      </div>
       <!-- TODO: tags -->
       <div class="flex flex-wrap gap-2 pt-[0.5rem]">
         <el-tag
@@ -149,13 +162,19 @@ interface UpdateApiResponse {
   error?: string;
 }
 
+const routes = useRoute();
+
+const onRoutes = computed(() => {
+  return routes.path;
+});
+
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
 
 const userStore = useUserStore();
-const { isLogin, isGoogleLogin, googleUid } = storeToRefs(userStore);
+const { isLogin, isGoogleLogin, googleUid, userList } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
 const { getHotMeme, savaLikeIdList } = memeStore;
@@ -169,6 +188,26 @@ const hotMemeIds = computed(() => {
 });
 
 const props = defineProps<{ postData: postItem }>();
+
+const fotmatLikedNames = computed(() => {
+  let likedUsers = [];
+  let users = [];
+  if (props.postData?.liked_user && userList?.value) {
+    if (typeof props.postData.liked_user === "object")
+      likedUsers = props.postData.liked_user;
+    else if (typeof props.postData.liked_user === "string") {
+      try {
+        likedUsers = JSON.parse(props.postData.liked_user);
+      } catch (error) {}
+    }
+    userList.value.map((user) => {
+      const { uid, displayName } = user;
+      if (likedUsers.includes(uid)) users.push(displayName);
+      return user;
+    });
+  }
+  return users;
+});
 
 const showTags = computed(() => {
   if (props.postData?.tags) {

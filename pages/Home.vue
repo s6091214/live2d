@@ -31,7 +31,7 @@
           popper-class="singleton-tooltip"
         >
           <template #content>
-            <span>通過 Google 驗證即可留言</span>
+            <span>創建暱稱或Google 登入即可留言</span>
           </template>
         </el-tooltip>
       </div>
