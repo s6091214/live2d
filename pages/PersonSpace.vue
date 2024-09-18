@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 const memeStore = useMemeStore();
-const { getMemeList } = memeStore;
 const { memeList, hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
@@ -23,26 +22,25 @@ const { isLogin, googleUid } = storeToRefs(userStore);
 const filterLikes = computed(() => {
   let resultArray = [];
   let additional = [];
+
+  if (hotMemesList?.value && googleUid.value) {
+    resultArray = [...hotMemesList.value].filter((item) => {
+      const isLike = likeIdList.value.includes(item.memeId);
+      return isLike;
+    });
+  }
+
   if (likeIdList?.value) {
     if (memeList?.value) {
-      resultArray = [...memeList.value].filter((item) => {
+      additional = [...memeList.value].filter((item) => {
         const isLike = likeIdList.value.includes(item.id);
         return isLike;
       });
     }
   }
 
-  if (!googleUid.value) return resultArray;
-
-  if (hotMemesList?.value) {
-    additional = [...hotMemesList.value].filter((item) => {
-      const isLike = likeIdList.value.includes(item.memeId);
-      return isLike;
-    });
-  }
-
   if (additional.length) {
-    const combinedArray = [...additional, ...resultArray];
+    const combinedArray = [...resultArray, ...additional];
     const uniqueByMemeId = combinedArray
       .reduce((acc, item) => {
         // 確保每個 memeId 只有一個物件
@@ -56,10 +54,6 @@ const filterLikes = computed(() => {
   }
   return resultArray;
 });
-
-if (!memeList.value.length) {
-  getMemeList();
-}
 </script>
 
 <style scoped></style>

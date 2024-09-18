@@ -112,7 +112,7 @@ const { setNickname, setUserInfo, logoutFromGoogle } = userStore;
 const { isLogin, isGoogleLogin, nickname, userInfo } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
-const { savaLikeIdList, getMemeList } = memeStore;
+const { savaLikeIdList } = memeStore;
 
 const emit = defineEmits(["close", "openUserDialog"]);
 
@@ -159,7 +159,7 @@ const memeRefreshing = ref(false);
 const memeRefesh = (reset: boolean) => {
   if (!reset) memeRefreshing.value = true;
   const page = reset ? 1 : randomNumber(1, 10);
-  getMemeList(page).then((res) => {
+  useMemeList(page).then((res) => {
     if (!reset) memeRefreshing.value = false;
   });
 };

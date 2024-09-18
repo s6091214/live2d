@@ -53,13 +53,13 @@ const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
 const { likeIdList, hotMemesList } = storeToRefs(memeStore);
-const { getMemeList, getHotMeme, savaLikeIdList } = memeStore;
+const { savaLikeIdList } = memeStore;
 
 const userStore = useUserStore();
 const { googleUid } = storeToRefs(userStore);
 
-getMemeList();
-getHotMeme();
+useMemeList();
+useHotMeme();
 
 watch(googleUid, async (uid) => {
   if (uid && uid !== "" && hotMemesList?.value.length) {

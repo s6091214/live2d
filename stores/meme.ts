@@ -45,68 +45,6 @@ export const useMemeStore = defineStore("meme", () => {
     if (list && list.length) hotMemes.value = list;
   };
 
-  const getMemeList = async (page: number = 1) => {
-    function dataFormater(list) {
-      let newList = [];
-      const filterString = ["免費救援", "免費援助", "柯文哲被押"];
-      if (list.length) {
-        newList = list.filter((content) => {
-          let show = true;
-          const title = content.title;
-          for (const string of filterString) {
-            if (title.includes(string)) {
-              show = false;
-              break;
-            }
-          }
-          return show;
-        });
-        const memes = newList.map((content) => {
-          const meme = {
-            ...content,
-            memeId: content.id,
-            tags: content.hashtag
-              ? content.hashtag.split(" ").map((tag, index) => ({
-                  title: tag,
-                  id: `meme${content.id}-tag${index}`,
-                }))
-              : [],
-            created_date: content.created_at?.date_time_string
-              ? content.created_at.date_time_string
-              : "",
-            liked_user: [],
-          };
-          return meme;
-        });
-        setMemeList(memes);
-      }
-    }
-    if (memePage.value === page) return false;
-    memePage.value = page;
-    const { data: memes } = await useAsyncData<ApiResponse>("getMemeList", () =>
-      $fetch(`https://memes.tw/wtf/api?page=${page}`)
-    );
-    if (memes.value) {
-      dataFormater(memes.value);
-    }
-    return true;
-  };
-
-  const getHotMeme = async () => {
-    const { data: memes } = await useAsyncData<ApiResponse>(
-      "getHotMemeList",
-      () =>
-        // $fetch("/api/meme")
-        $fetch(
-          "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes"
-        )
-    );
-
-    if (memes.value?.data) {
-      setHotMeme(memes.value.data);
-    }
-  };
-
   onMounted(() => {
     if (cookieLikeIdList?.value) {
       const cookie = cookieLikeIdList.value.toString();
@@ -126,9 +64,7 @@ export const useMemeStore = defineStore("meme", () => {
     hotMemesList,
     likeIdList,
     setMemeList,
-    getMemeList,
     setHotMeme,
-    getHotMeme,
     savaLikeIdList,
   };
 });

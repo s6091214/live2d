@@ -128,7 +128,7 @@
           </ul>
         </div> -->
         <!-- @getList="updateList" -->
-        <ReplyComment v-if="isLogin && showCommentBlock" :comment="postData" />
+        <ReplyComment v-if="isLogin && showCommentBlock" :postData="postData" />
       </div>
     </div>
   </div>
@@ -146,6 +146,7 @@ type postItem = {
   tags: { title: string; id: number }[] | string;
   liked_user: string[] | string;
   created_date: string;
+  comments?: { name: string; content: string }[];
 };
 
 interface ApiResponse {
@@ -168,7 +169,7 @@ const userStore = useUserStore();
 const { isLogin, isGoogleLogin, googleUid, userList } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
-const { getHotMeme, savaLikeIdList } = memeStore;
+const { savaLikeIdList } = memeStore;
 const { hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const hotMemeIds = computed(() => {
@@ -259,7 +260,7 @@ const putMemeData = async (request) => {
         )
     );
     if (res.value.success) {
-      getHotMeme();
+      useHotMeme();
     }
   }
 };
@@ -322,7 +323,7 @@ const addHotMemes = async () => {
   // console.log(res.value);
 
   if (res.value) {
-    getHotMeme();
+    useHotMeme();
     return;
   }
 

@@ -1,21 +1,20 @@
 <template>
-  <!-- @submit.prevent="submit(comment.id)" -->
   <form
     action="#"
     class="relative"
     :class="{ 'mt-2': !osk }"
     :style="{ paddingBottom: osk ? renderHeight : 0 }"
     event=""
-    @submit.prevent="() => {}"
+    @submit.prevent="submit(postData.memeId)"
   >
     <div
       class="form-group input w-full flex justify-between"
       :class="{ osk: osk }"
-      v-if="comment"
+      v-if="postData"
     >
       <textarea
         type="text"
-        :id="`reply-${comment.id}`"
+        :id="`reply-${postData.memeId}`"
         ref="textAreaRef"
         class="textarea"
         placeholder="留言..."
@@ -29,7 +28,7 @@
         type="primary"
         native-type="button"
         size="small"
-        :disabled="loading"
+        :disabled="globalLoading"
         v-if="showSubmitButton(form.comment)"
       >
         發布
@@ -38,23 +37,23 @@
   </form>
 </template>
 
-<script setup>
-// const memeStore = useMemeStore();
-// const { addComment, getHotMeme } = memeStore;
+<script lang="ts" setup>
+import type { HtmlHTMLAttributes } from "vue";
+import type { MemePost } from "~/types";
 
-const props = defineProps({
-  comment: Object,
-});
+const props = defineProps<{ postData: MemePost }>();
 
-const { comment } = toRefs(props);
+const initialStore = useInitialStore();
+const { globalLoading } = storeToRefs(initialStore);
 
-const loading = ref(false);
+const userStore = useUserStore();
+const { nickname } = storeToRefs(userStore);
 
 let form = reactive({
   comment: "",
 });
 
-const textAreaRef = ref({});
+const textAreaRef = ref<HTMLTextAreaElement | null>(null);
 
 const renderHeight = ref("24px");
 
@@ -94,21 +93,29 @@ const formatString = (msg) => {
   return msg;
 };
 
-const submit = async (id) => {
+const submit = async (memeId) => {
   const comment = formatString(form.comment);
-  if (id) {
-    addComment(id, { comment })
-      .then((res) => {
-        if (res) {
-          form.comment = "";
-          renderHeight.value = "24px";
-          // emit("getList");
-        }
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-  }
+  console.log(memeId, comment);
+  // if (memeId && nickname) {
+  //   setLoading(true);
+  //   const { data: res } =
+  //     (await useAsyncData) <
+  //     UpdateApiResponse >
+  //     ("updateMeme",
+  //     () =>
+  //       $fetch(
+  //         `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
+  //         {
+  //           method: "PUT",
+  //           body: { ...request },
+  //         }
+  //       ).finally(() => {
+  //         setLoading(false);
+  //       }));
+  //   if (res.value.success) {
+  //     useHotMeme();
+  //   }
+  // }
 };
 
 onMounted(() => {
@@ -125,7 +132,7 @@ onMounted(() => {
 .form-group.osk {
   position: absolute;
   left: 0;
-  top: 0.5rem;
+  top: 0;
 }
 
 .textarea {

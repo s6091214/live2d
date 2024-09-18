@@ -47,7 +47,6 @@ const { setLive2dInit } = initialStore;
 const { live2dInitStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
-const { getMemeList } = memeStore;
 const { memeList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
@@ -151,10 +150,6 @@ if (deviceName === "unknown") {
       },
     ],
   });
-}
-
-if (!memeList.value.length) {
-  getMemeList();
 }
 </script>
 
