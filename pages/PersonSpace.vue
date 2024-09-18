@@ -25,22 +25,24 @@ const filterLikes = computed(() => {
   let additional = [];
   if (likeIdList?.value) {
     if (memeList?.value) {
-      // console.log(memeList.value, likeIdList.value);
       resultArray = [...memeList.value].filter((item) => {
         const isLike = likeIdList.value.includes(item.id);
         return isLike;
       });
     }
-    if (hotMemesList?.value && googleUid.value) {
-      additional = [...hotMemesList.value].filter((item) => {
-        const isLike = likeIdList.value.includes(item.memeId);
-        return isLike;
-      });
-    }
+  }
+
+  if (!googleUid.value) return resultArray;
+
+  if (hotMemesList?.value) {
+    additional = [...hotMemesList.value].filter((item) => {
+      const isLike = likeIdList.value.includes(item.memeId);
+      return isLike;
+    });
   }
 
   if (additional.length) {
-    const combinedArray = [...resultArray, ...additional];
+    const combinedArray = [...additional, ...resultArray];
     const uniqueByMemeId = combinedArray
       .reduce((acc, item) => {
         // 確保每個 memeId 只有一個物件

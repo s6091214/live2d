@@ -128,10 +128,7 @@
           </ul>
         </div> -->
         <!-- @getList="updateList" -->
-        <ReplyComment
-          v-if="isGoogleLogin && showCommentBlock"
-          :comment="postData"
-        />
+        <ReplyComment v-if="isLogin && showCommentBlock" :comment="postData" />
       </div>
     </div>
   </div>
@@ -161,12 +158,6 @@ interface UpdateApiResponse {
   success?: string;
   error?: string;
 }
-
-const routes = useRoute();
-
-const onRoutes = computed(() => {
-  return routes.path;
-});
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
@@ -227,7 +218,7 @@ const showTags = computed(() => {
 const showCommentBlock = ref(false);
 
 const handleComment = () => {
-  if (isGoogleLogin.value) {
+  if (isLogin.value) {
     showCommentBlock.value = true;
   } else {
     emit("handleTip");

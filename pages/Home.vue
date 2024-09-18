@@ -51,7 +51,7 @@ const { getMemeList } = memeStore;
 const { memeList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
-const { isGoogleLogin } = storeToRefs(userStore);
+const { isLogin } = storeToRefs(userStore);
 
 declare global {
   interface Window {
@@ -67,8 +67,8 @@ const tooltipRef = ref();
 const tipVisible = ref(false);
 
 const tipHandler = () => {
-  if (isGoogleLogin.value) {
-    console.log("google 登入");
+  if (isLogin.value) {
+    console.log("登入狀態");
   } else {
     tipVisible.value = !tipVisible.value;
   }

@@ -39,9 +39,8 @@
 </template>
 
 <script setup>
-// const { addComment } = useMemeStore();
-
-// const emit = defineEmits(["getList"]);
+// const memeStore = useMemeStore();
+// const { addComment, getHotMeme } = memeStore;
 
 const props = defineProps({
   comment: Object,
