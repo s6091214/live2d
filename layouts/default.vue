@@ -58,8 +58,11 @@ const { savaLikeIdList } = memeStore;
 const userStore = useUserStore();
 const { googleUid } = storeToRefs(userStore);
 
-useMemeList();
-useHotMeme();
+const { getMemeList } = useMemeList();
+const { getHotMeme } = useHotMeme();
+
+getMemeList();
+getHotMeme();
 
 watch(googleUid, async (uid) => {
   if (uid && uid !== "" && hotMemesList?.value.length) {

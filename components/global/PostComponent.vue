@@ -82,21 +82,21 @@
       </p>
       <!-- TODO: 留言 -->
       <div class="text-left">
-        <!-- <a
-          v-show="!commentsControls[content.id]"
-          v-if="content.comments && content.comments.length"
+        <a
+          v-show="!commentsControls[postData.memeId]"
+          v-if="postData.comments && postData.comments.length"
           href="#"
           event=""
-          @click.prevent="showComments(content.id)"
+          @click.prevent="showComments(postData.memeId)"
           class="text-neutral-500"
-          >查看全部{{ content.comments.length }}則留言</a
-        > -->
-        <!-- <div v-show="commentsControls[content.id]">
+          >查看全部{{ postData.comments.length }}則留言</a
+        >
+        <div v-show="commentsControls[postData.memeId]">
           <ul>
             <li
-              class="pt-[12px]"
-              v-for="comment in content.comments"
-              :key="comment.id"
+              class="pt-[12px] pb-2"
+              v-for="(comment, index) in postData.comments"
+              :key="`${comment.name}-${index}`"
             >
               <div class="flex">
                 <el-avatar
@@ -111,11 +111,9 @@
                   <p class="text-white">
                     <span
                       class="font-bold inline-block text-sky-500 mr-[4px]"
-                      >{{
-                        comment.user ? comment.user.nickname : "noname"
-                      }}</span
+                      >{{ comment.name ? comment.name : "noname" }}</span
                     >
-                    <span v-html="renderHtml(comment.comment)"></span>
+                    <span v-html="renderHtml(comment.content)"></span>
                   </p>
                   <div
                     v-if="comment.created_at"
@@ -126,8 +124,7 @@
               </div>
             </li>
           </ul>
-        </div> -->
-        <!-- @getList="updateList" -->
+        </div>
         <ReplyComment v-if="isLogin && showCommentBlock" :postData="postData" />
       </div>
     </div>
@@ -135,22 +132,10 @@
 </template>
 
 <script lang="ts" setup>
-type postItem = {
-  id: number;
-  title: string;
-  url: string;
-  src: string;
-  memeId: number;
-  pageview: number;
-  total_like_count: number;
-  tags: { title: string; id: number }[] | string;
-  liked_user: string[] | string;
-  created_date: string;
-  comments?: { name: string; content: string }[];
-};
+import type { MemePost } from "~/types";
 
 interface ApiResponse {
-  data: postItem;
+  data: MemePost;
   success?: string;
   error?: string;
 }
@@ -161,6 +146,8 @@ interface UpdateApiResponse {
 }
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
+
+const { getHotMeme } = useHotMeme();
 
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
@@ -179,7 +166,7 @@ const hotMemeIds = computed(() => {
   return [];
 });
 
-const props = defineProps<{ postData: postItem }>();
+const props = defineProps<{ postData: MemePost }>();
 
 const fotmatLikedNames = computed(() => {
   let likedUsers = [];
@@ -260,7 +247,7 @@ const putMemeData = async (request) => {
         )
     );
     if (res.value.success) {
-      useHotMeme();
+      getHotMeme();
     }
   }
 };
@@ -287,8 +274,16 @@ const addHotMemes = async () => {
     }
   }
 
-  const { title, url, src, memeId, pageview, total_like_count, created_date } =
-    props.postData;
+  const {
+    title,
+    url,
+    src,
+    memeId,
+    pageview,
+    total_like_count,
+    created_date,
+    comments,
+  } = props.postData;
 
   const requestData = {
     title,
@@ -298,8 +293,9 @@ const addHotMemes = async () => {
     pageview,
     total_like_count,
     created_date,
-    tags: showTags.value,
+    tags: [...showTags.value],
     liked_user,
+    comments,
   };
 
   // console.log(requestData);
@@ -323,7 +319,7 @@ const addHotMemes = async () => {
   // console.log(res.value);
 
   if (res.value) {
-    useHotMeme();
+    getHotMeme();
     return;
   }
 
@@ -342,6 +338,19 @@ const pressLike = () => {
     handleLike(props.postData.memeId);
     addHotMemes();
   }
+};
+
+let commentsControls = reactive({});
+
+const showComments = (id) => {
+  if (id) commentsControls[id] = true;
+};
+
+const renderHtml = (msg) => {
+  /** 將html碼格式化 只取得文字 */
+  const regex = /<(?!br\s*\/?)[^>]*>/g;
+  if (typeof msg === "string") return msg.replace(regex, " ");
+  return "";
 };
 </script>
 

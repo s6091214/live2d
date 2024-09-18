@@ -7,7 +7,7 @@
         <!-- TODO: 文章列表 -->
         <PostComponent
           v-for="content in memeList"
-          :key="content.id"
+          :key="content.memeId"
           :postData="content"
           @showTooltip="(target) => (buttonRef = target)"
           @handleTip="tipHandler"

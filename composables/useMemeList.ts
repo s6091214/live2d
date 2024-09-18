@@ -40,22 +40,29 @@ function dataFormater(list) {
   }
 }
 
-export function useMemeList(page: number = 1) {
+export function useMemeList() {
   const memeStore = useMemeStore();
   const { setMemeList } = memeStore;
 
   const memePage = ref(0);
 
-  return new Promise(async (resolve) => {
-    if (memePage.value === page) return resolve(false);
-    memePage.value = page;
-    const { data: memes } = await useAsyncData<ApiResponse>("getMemeList", () =>
-      $fetch(`https://memes.tw/wtf/api?page=${page}`)
-    );
-    if (memes.value) {
-      const formater = dataFormater(memes.value);
-      setMemeList(formater);
-    }
-    resolve(true);
-  });
+  const getMemeList = (page: number = 1) => {
+    return new Promise(async (resolve) => {
+      if (memePage.value === page) return resolve(false);
+      memePage.value = page;
+      const { data: memes } = await useAsyncData<ApiResponse>(
+        "getMemeList",
+        () => $fetch(`https://memes.tw/wtf/api?page=${page}`)
+      );
+      if (memes.value) {
+        const formater = dataFormater(memes.value);
+        setMemeList(formater);
+      }
+      resolve(true);
+    });
+  };
+
+  return {
+    getMemeList,
+  };
 }

@@ -5,7 +5,7 @@
     <div class="w-full">
       <PostComponent
         v-for="content in hotMemesList"
-        :key="content.id"
+        :key="content.memeId"
         :postData="content"
       />
     </div>

@@ -100,12 +100,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useMemeList } from "~/composables/useMemeList.ts";
 import deviceName from "../../util/mobileDetective";
 import randomNumber from "~/util/randomNumber";
 
 const props = defineProps({
   scrollOver: Boolean,
 });
+
+const { getMemeList } = useMemeList();
 
 const userStore = useUserStore();
 const { setNickname, setUserInfo, logoutFromGoogle } = userStore;
@@ -159,7 +162,7 @@ const memeRefreshing = ref(false);
 const memeRefesh = (reset: boolean) => {
   if (!reset) memeRefreshing.value = true;
   const page = reset ? 1 : randomNumber(1, 10);
-  useMemeList(page).then((res) => {
+  getMemeList(page).then((res) => {
     if (!reset) memeRefreshing.value = false;
   });
 };

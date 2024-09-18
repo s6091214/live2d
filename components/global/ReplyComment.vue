@@ -26,7 +26,7 @@
       ></textarea>
       <el-button
         type="primary"
-        native-type="button"
+        native-type="submit"
         size="small"
         :disabled="globalLoading"
         v-if="showSubmitButton(form.comment)"
@@ -38,16 +38,30 @@
 </template>
 
 <script lang="ts" setup>
-import type { HtmlHTMLAttributes } from "vue";
 import type { MemePost } from "~/types";
+
+type comment = {
+  name: string;
+  content: string;
+  created_at: number;
+  avatar: string;
+};
+
+interface UpdateApiResponse {
+  success?: string;
+  error?: string;
+}
 
 const props = defineProps<{ postData: MemePost }>();
 
+const { getHotMeme } = useHotMeme();
+
 const initialStore = useInitialStore();
+const { setLoading } = initialStore;
 const { globalLoading } = storeToRefs(initialStore);
 
 const userStore = useUserStore();
-const { nickname } = storeToRefs(userStore);
+const { nickname, userInfo, isGoogleLogin } = storeToRefs(userStore);
 
 let form = reactive({
   comment: "",
@@ -94,28 +108,42 @@ const formatString = (msg) => {
 };
 
 const submit = async (memeId) => {
-  const comment = formatString(form.comment);
-  console.log(memeId, comment);
-  // if (memeId && nickname) {
-  //   setLoading(true);
-  //   const { data: res } =
-  //     (await useAsyncData) <
-  //     UpdateApiResponse >
-  //     ("updateMeme",
-  //     () =>
-  //       $fetch(
-  //         `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
-  //         {
-  //           method: "PUT",
-  //           body: { ...request },
-  //         }
-  //       ).finally(() => {
-  //         setLoading(false);
-  //       }));
-  //   if (res.value.success) {
-  //     useHotMeme();
-  //   }
-  // }
+  const content = formatString(form.comment);
+  const thisComment: comment = {
+    name: nickname.value,
+    content,
+    created_at: new Date().getTime(),
+    avatar: "",
+  };
+  if (isGoogleLogin?.value && userInfo?.value.photoURL) {
+    thisComment.avatar = userInfo.value.photoURL;
+  }
+
+  const request = {
+    ...props.postData,
+    comments: [...props.postData.comments, thisComment],
+  };
+  if (memeId) {
+    setLoading(true);
+    const { data: res } = await useAsyncData<UpdateApiResponse>(
+      "updateMeme",
+      () =>
+        $fetch(
+          `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
+          {
+            method: "PUT",
+            body: { ...request },
+          }
+        ).finally(() => {
+          setLoading(false);
+        })
+    );
+    if (res.value.success) {
+      form.comment = "";
+      renderHeight.value = "24px";
+      getHotMeme();
+    }
+  }
 };
 
 onMounted(() => {
