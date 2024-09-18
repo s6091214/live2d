@@ -100,7 +100,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useMemeList } from "~/composables/useMemeList.ts";
 import deviceName from "../../util/mobileDetective";
 import randomNumber from "~/util/randomNumber";
 
