@@ -8,7 +8,7 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 ## Development Server
 
-Start the development server on `http://localhost:3000`:
+Start the development server on `http://localhost:9527`:
 
 ```bash
 # npm

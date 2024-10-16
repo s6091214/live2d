@@ -6,19 +6,24 @@ interface ApiResponse {
 
 export function useHotMeme() {
   const memeStore = useMemeStore();
+  const { setHotMeme } = memeStore;
 
-  const getHotMeme = async () => {
+  const initialStore = useInitialStore();
+  const { setLoading } = initialStore;
+
+  const config = useRuntimeConfig();
+
+  const getHotMeme = async (setload: boolean = false) => {
+    if (setload) setLoading(true);
     try {
       const { data: memes } = await useAsyncData<ApiResponse>(
         "getHotMeme",
-        () =>
-          $fetch(
-            "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes"
-          )
-      );
-
-      if (memes?.value.data) {
-        memeStore.setHotMeme(memes.value.data);
+        () => $fetch(`${config.public.apiBaseUrl}/api/hot-meme`)
+      ).finally(() => {
+        if (setload) setLoading(false);
+      });
+      if (memes?.value?.data) {
+        setHotMeme(memes.value.data);
       }
     } catch (error) {
       console.error("Error fetching memes:", error);

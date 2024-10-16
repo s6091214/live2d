@@ -16,6 +16,7 @@
     "firebase": "^10.12.5",
     "nuxt": "^3.12.4",
     "pnpm": "^9.9.0",
+    "ufo": "^1.5.4",
     "vue": "latest"
   },
   "devDependencies": {

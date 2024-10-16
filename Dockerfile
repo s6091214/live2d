@@ -23,4 +23,4 @@ RUN pnpm build
 EXPOSE 3000
 
 # 設置默認的命令來啟動應用
-CMD [ "pnpm", "start" ]
+CMD [ "pnpm", "dev" ]

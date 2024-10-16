@@ -1,18 +1,14 @@
 import type { MemePost } from "~/types";
-interface ApiResponse {
-  data: MemePost[];
-}
 
 export const useMemeStore = defineStore("meme", () => {
   let memes = ref([]);
   let hotMemes = ref([]);
-  const memePage = ref(0);
 
   const memeList = computed(() => memes.value);
 
   const hotMemesList = computed(() => {
     const list = hotMemes.value
-      .filter((meme) => meme.id)
+      .filter((meme) => meme.memeId)
       .map((memeData) => ({
         ...memeData,
       }));

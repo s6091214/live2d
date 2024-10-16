@@ -124,33 +124,33 @@ const live2dInit = () => {
   }
 };
 
-const live2dHandler = () => {
-  const OML2D = window.OML2D;
-  // console.log("test", live2dInitStatus.value);
-  if (!OML2D) {
-    if (!live2dInitStatus.value) {
-      setTimeout(() => {
-        live2dInit();
-      }, 1000);
-    }
-  } else {
-    live2dInit();
-  }
-};
+// const live2dHandler = () => {
+//   const OML2D = window.OML2D;
+//   // console.log("test", live2dInitStatus.value);
+//   if (!OML2D) {
+//     if (!live2dInitStatus.value) {
+//       setTimeout(() => {
+//         live2dInit();
+//       }, 1000);
+//     }
+//   } else {
+//     live2dInit();
+//   }
+// };
 
-if (deviceName === "unknown") {
-  useHead({
-    script: [
-      {
-        src: "https://unpkg.com/oh-my-live2d@latest",
-        async: true,
-        onload: () => {
-          live2dHandler();
-        },
-      },
-    ],
-  });
-}
+// if (deviceName === "unknown") {
+//   useHead({
+//     script: [
+//       {
+//         src: "https://unpkg.com/oh-my-live2d@latest",
+//         async: true,
+//         onload: () => {
+//           live2dHandler();
+//         },
+//       },
+//     ],
+//   });
+// }
 </script>
 
 <style scoped>

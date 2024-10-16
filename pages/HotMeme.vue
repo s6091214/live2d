@@ -13,33 +13,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { MemePost } from "~/types";
-
-interface ApiResponse {
-  data: MemePost[];
-}
-
-const initialStore = useInitialStore();
-const { setLoading } = initialStore;
-
 const memeStore = useMemeStore();
-const { setHotMeme } = memeStore;
 const { hotMemesList } = storeToRefs(memeStore);
 
-setLoading(true);
+const { getHotMeme } = useHotMeme();
 
-const { data: memes, refresh } = await useAsyncData<ApiResponse>(
-  "getHotMemeList",
-  () =>
-    // $fetch("/api/meme")
-    $fetch("https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes")
-);
-
-setLoading(false);
-
-if (memes.value?.data) {
-  setHotMeme(memes.value.data);
-}
+getHotMeme();
 </script>
 
 <style scoped></style>

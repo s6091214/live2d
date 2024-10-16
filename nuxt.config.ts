@@ -10,7 +10,7 @@ export default defineNuxtConfig({
           content: "迷因、社群、貼文、留言、點讚和收藏",
         },
         { property: "og:title", content: "MEMETALK 用迷因來聊天的社群" },
-        { property: "og:url", content: "http://localhost:3000/" },
+        { property: "og:url", content: "http://localhost:9527/" },
         {
           property: "og:description",
           content: "MEMES, SNS, Post, COMMENTS, LIKE and COLLECT",
@@ -31,6 +31,7 @@ export default defineNuxtConfig({
       messagingSenderId: process.env.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.NUXT_PUBLIC_APP_ID,
       measurementId: process.env.NUXT_PUBLIC_MEASUREMENT_ID,
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
     },
     dev: process.env.NODE_ENV !== "production",
   },
@@ -71,7 +72,4 @@ export default defineNuxtConfig({
       },
     ],
   },
-  // nitro: {
-  //   plugins: ["~/server/db/index.ts"],
-  // },
 });

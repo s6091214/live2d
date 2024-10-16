@@ -69,7 +69,7 @@
         <el-tag
           type="danger"
           v-for="tag in showTags"
-          :key="tag.id"
+          :key="tag.xata_id"
           effect="dark"
           round
         >
@@ -95,8 +95,8 @@
           <ul>
             <li
               class="pt-[12px] pb-2"
-              v-for="(comment, index) in postData.comments"
-              :key="`${comment.name}-${index}`"
+              v-for="comment in postData.comments"
+              :key="comment.xata_id"
             >
               <div class="flex">
                 <el-avatar
@@ -116,8 +116,8 @@
                     <span v-html="renderHtml(comment.content)"></span>
                   </p>
                   <div
-                    v-if="comment.created_at"
-                    v-timeformat="comment.created_at"
+                    v-if="comment.xata_createdat"
+                    v-timeformat="comment.xata_createdat"
                     class="text-neutral-500 mt-[0.5rem] flex-1"
                   ></div>
                 </div>
@@ -144,6 +144,8 @@ interface UpdateApiResponse {
   success?: string;
   error?: string;
 }
+
+const config = useRuntimeConfig();
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
@@ -232,19 +234,17 @@ const handleLike = (id: number) => {
   }
 };
 
-const putMemeData = async (request) => {
+const likeMeme = async (request) => {
+  console.log("likeMeme");
   const { memeId } = request;
   if (memeId) {
     const { data: res } = await useAsyncData<UpdateApiResponse>(
       "updateMeme",
       () =>
-        $fetch(
-          `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
-          {
-            method: "PUT",
-            body: { ...request },
-          }
-        )
+        $fetch(`${config.public.apiBaseUrl}/api/meme/${memeId}/like`, {
+          method: "PUT",
+          body: { uid: googleUid.value },
+        })
     );
     if (res.value.success) {
       getHotMeme();
@@ -302,29 +302,26 @@ const addHotMemes = async () => {
 
   const isExist = hotMemeIds.value.includes(props.postData.memeId);
   if (isExist) {
-    if (isGoogleLogin.value) putMemeData(requestData);
+    if (isGoogleLogin.value) likeMeme(requestData);
     return;
   }
 
   const { data: res } = await useAsyncData<ApiResponse>("createMeme", () =>
-    $fetch(
-      "https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes",
-      {
-        method: "POST",
-        body: { ...requestData },
-      }
-    )
+    $fetch(`${config.public.apiBaseUrl}/api/hot-meme`, {
+      method: "POST",
+      body: { ...requestData },
+    })
   );
-
-  // console.log(res.value);
 
   if (res.value) {
     getHotMeme();
     return;
   }
 
-  if (res.value === null) {
-    putMemeData(requestData);
+  console.log(res.value);
+
+  if (res.value === null && isGoogleLogin.value) {
+    likeMeme(requestData);
   }
 };
 

@@ -43,7 +43,6 @@ import type { MemePost } from "~/types";
 type comment = {
   name: string;
   content: string;
-  created_at: number;
   avatar: string;
 };
 
@@ -112,7 +111,6 @@ const submit = async (memeId) => {
   const thisComment: comment = {
     name: nickname.value,
     content,
-    created_at: new Date().getTime(),
     avatar: "",
   };
   if (isGoogleLogin?.value && userInfo?.value.photoURL) {
@@ -124,25 +122,25 @@ const submit = async (memeId) => {
     comments: [...props.postData.comments, thisComment],
   };
   if (memeId) {
-    setLoading(true);
-    const { data: res } = await useAsyncData<UpdateApiResponse>(
-      "updateMeme",
-      () =>
-        $fetch(
-          `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
-          {
-            method: "PUT",
-            body: { ...request },
-          }
-        ).finally(() => {
-          setLoading(false);
-        })
-    );
-    if (res.value.success) {
-      form.comment = "";
-      renderHeight.value = "24px";
-      getHotMeme();
-    }
+    // setLoading(true);
+    // const { data: res } = await useAsyncData<UpdateApiResponse>(
+    //   "updateMeme",
+    //   () =>
+    //     $fetch(
+    //       `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
+    //       {
+    //         method: "PUT",
+    //         body: { ...request },
+    //       }
+    //     ).finally(() => {
+    //       setLoading(false);
+    //     })
+    // );
+    // if (res.value.success) {
+    //   form.comment = "";
+    //   renderHeight.value = "24px";
+    //   getHotMeme();
+    // }
   }
 };
 

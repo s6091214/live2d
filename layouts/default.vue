@@ -104,11 +104,11 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-const { user, getUserList } = useUser();
+const { getUserList } = useUser();
 
 getUserList();
 
-onMounted(async () => {
+onMounted(() => {
   window.addEventListener("scroll", () => {
     const overHeigth = window.scrollY > 200;
     setScrollOver(overHeigth);

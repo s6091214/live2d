@@ -6,8 +6,6 @@ export type UserType = {
 };
 
 export type MemePost = {
-  // _id: string;
-  id: number;
   title: string;
   src: string;
   url: string;
@@ -23,6 +21,7 @@ export type MemePost = {
     name: string;
     content: string;
     avatar?: string;
-    created_at?: number | string;
+    xata_createdat?: string;
+    xata_id?: string;
   }[];
 };
