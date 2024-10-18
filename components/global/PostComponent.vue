@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="postData"
-    class="max-w-[470px] w-full mx-auto pb-[20px] border-b border-gray-400"
+    class="max-w-[470px] w-full mx-auto pb-[8px] border-b border-gray-400"
   >
     <!-- article header -->
     <div class="flex items-center text-white py-3">
@@ -25,6 +25,7 @@
       <!-- TODO: 操作 -->
       <div class="flex pb-[4px]">
         <div class="flex items-center">
+          <!-- 按讚 -->
           <span
             class="p-[0.5rem] inline-block cursor-pointer"
             @click="pressLike"
@@ -38,7 +39,9 @@
               alt=""
             />
           </span>
+          <!-- 留言 -->
           <el-button
+            v-if="!isHome"
             @click="handleComment"
             @mouseover="($event) => emit('showTooltip', $event.currentTarget)"
           >
@@ -77,7 +80,7 @@
         </el-tag>
       </div>
       <!-- TODO: 標題 -->
-      <p class="text-left text-white mt-[0.5rem]">
+      <p class="text-left text-white my-[0.5rem]">
         <span>{{ postData.title }}</span>
       </p>
       <!-- TODO: 留言 -->
@@ -207,6 +210,23 @@ const showTags = computed(() => {
 
 const showCommentBlock = ref(false);
 
+const routes = useRoute();
+
+const onRoutes = computed(() => {
+  return routes.path;
+});
+
+const isHome = computed(() => {
+  switch (onRoutes.value) {
+    case "/":
+    case "/Home":
+      return true;
+
+    default:
+      return false;
+  }
+});
+
 const handleComment = () => {
   if (isLogin.value) {
     showCommentBlock.value = true;
@@ -235,7 +255,6 @@ const handleLike = (id: number) => {
 };
 
 const likeMeme = async (request) => {
-  console.log("likeMeme");
   const { memeId } = request;
   if (memeId) {
     const { data: res } = await useAsyncData<UpdateApiResponse>(
@@ -246,6 +265,7 @@ const likeMeme = async (request) => {
           body: { uid: googleUid.value },
         })
     );
+    console.log(res.value);
     if (res.value.success) {
       getHotMeme();
     }

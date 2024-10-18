@@ -5,7 +5,7 @@
     :class="{ 'mt-2': !osk }"
     :style="{ paddingBottom: osk ? renderHeight : 0 }"
     event=""
-    @submit.prevent="submit(postData.memeId)"
+    @submit.prevent="submit"
   >
     <div
       class="form-group input w-full flex justify-between"
@@ -21,7 +21,8 @@
         v-model="form.comment"
         @focus="oskControl(true)"
         @change="textareaAutoHeight"
-        @keydown="textareaAutoHeight"
+        @keyup="textareaAutoHeight"
+        @blur="textareaAutoHeight"
         rows="1"
       ></textarea>
       <el-button
@@ -51,6 +52,12 @@ interface UpdateApiResponse {
   error?: string;
 }
 
+interface ApiResponse {
+  data: MemePost;
+  success?: string;
+  error?: string;
+}
+
 const props = defineProps<{ postData: MemePost }>();
 
 const { getHotMeme } = useHotMeme();
@@ -61,6 +68,11 @@ const { globalLoading } = storeToRefs(initialStore);
 
 const userStore = useUserStore();
 const { nickname, userInfo, isGoogleLogin } = storeToRefs(userStore);
+
+const memeStore = useMemeStore();
+const { hotMemesList } = storeToRefs(memeStore);
+
+const config = useRuntimeConfig();
 
 let form = reactive({
   comment: "",
@@ -106,41 +118,89 @@ const formatString = (msg) => {
   return msg;
 };
 
-const submit = async (memeId) => {
+const hotMemeIds = computed(() => {
+  if (hotMemesList?.value) {
+    return hotMemesList.value.map((meme) => meme.memeId);
+  }
+  return [];
+});
+
+const formatCommentData = () => {
   const content = formatString(form.comment);
+
   const thisComment: comment = {
     name: nickname.value,
     content,
     avatar: "",
   };
+
   if (isGoogleLogin?.value && userInfo?.value.photoURL) {
     thisComment.avatar = userInfo.value.photoURL;
   }
 
-  const request = {
-    ...props.postData,
-    comments: [...props.postData.comments, thisComment],
-  };
-  if (memeId) {
-    // setLoading(true);
-    // const { data: res } = await useAsyncData<UpdateApiResponse>(
-    //   "updateMeme",
-    //   () =>
-    //     $fetch(
-    //       `https://shielded-earth-43070-852d0af23eb2.herokuapp.com/api/memes/${memeId}`,
-    //       {
-    //         method: "PUT",
-    //         body: { ...request },
-    //       }
-    //     ).finally(() => {
-    //       setLoading(false);
-    //     })
-    // );
-    // if (res.value.success) {
-    //   form.comment = "";
-    //   renderHeight.value = "24px";
-    //   getHotMeme();
-    // }
+  return thisComment;
+};
+
+const addComment = async (memeId) => {
+  const comment = formatCommentData();
+
+  setLoading(true);
+  const { data: res } = await useAsyncData<UpdateApiResponse>(
+    "updateMeme",
+    () =>
+      $fetch(`${config.public.apiBaseUrl}/api/meme/${memeId}/comment`, {
+        method: "PUT",
+        body: { comment },
+      }).finally(() => {
+        setLoading(false);
+      })
+  );
+  if (res.value.success) {
+    form.comment = "";
+    renderHeight.value = "24px";
+    getHotMeme();
+  }
+};
+
+const addHotMemes = async (requestData) => {
+  const { data: res } = await useAsyncData<ApiResponse>("createMeme", () =>
+    $fetch(`${config.public.apiBaseUrl}/api/hot-meme`, {
+      method: "POST",
+      body: { ...requestData },
+    })
+  );
+
+  if (res.value) {
+    form.comment = "";
+    renderHeight.value = "24px";
+    getHotMeme();
+  }
+
+  console.log(res.value);
+
+  if (res.value === null) {
+    addComment(requestData.memeId);
+  }
+};
+
+const submit = async () => {
+  const { memeId } = props.postData;
+  if (!memeId) return;
+
+  const thisComment = formatCommentData();
+
+  const comments = [thisComment];
+
+  const isExist = hotMemeIds.value.includes(memeId);
+
+  if (!isExist) {
+    const requestData = {
+      ...props.postData,
+      comments,
+    };
+    addHotMemes(requestData);
+  } else {
+    addComment(memeId);
   }
 };
 
