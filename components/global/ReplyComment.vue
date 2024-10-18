@@ -22,6 +22,7 @@
         @focus="oskControl(true)"
         @change="textareaAutoHeight"
         @keyup="textareaAutoHeight"
+        @keydown="handleSubmit($event)"
         @blur="textareaAutoHeight"
         rows="1"
       ></textarea>
@@ -30,7 +31,7 @@
         native-type="submit"
         size="small"
         :disabled="globalLoading"
-        v-if="showSubmitButton(form.comment)"
+        v-if="showSubmitButton"
       >
         發布
       </el-button>
@@ -74,7 +75,7 @@ const { hotMemesList } = storeToRefs(memeStore);
 
 const config = useRuntimeConfig();
 
-let form = reactive({
+let form = ref({
   comment: "",
 });
 
@@ -98,18 +99,18 @@ const oskControl = (val) => {
   osk.value = val;
 };
 
-const showSubmitButton = (msg) => {
+const showSubmitButton = computed(() => {
   switch (true) {
-    case !msg:
-    case msg === "":
-    case typeof msg !== "string":
-    case msg.trim() === "":
+    case !form.value.comment:
+    case form.value.comment === "":
+    case typeof form.value.comment !== "string":
+    case form.value.comment.trim() === "":
       return false;
 
     default:
       return true;
   }
-};
+});
 
 const formatString = (msg) => {
   if (typeof msg === "string" && msg.includes("\n")) {
@@ -126,7 +127,7 @@ const hotMemeIds = computed(() => {
 });
 
 const formatCommentData = () => {
-  const content = formatString(form.comment);
+  const content = formatString(form.value.comment);
 
   const thisComment: comment = {
     name: nickname.value,
@@ -156,7 +157,7 @@ const addComment = async (memeId) => {
       })
   );
   if (res.value.success) {
-    form.comment = "";
+    form.value.comment = "";
     renderHeight.value = "24px";
     getHotMeme();
   }
@@ -171,7 +172,7 @@ const addHotMemes = async (requestData) => {
   );
 
   if (res.value) {
-    form.comment = "";
+    form.value.comment = "";
     renderHeight.value = "24px";
     getHotMeme();
   }
@@ -180,6 +181,15 @@ const addHotMemes = async (requestData) => {
 
   if (res.value === null) {
     addComment(requestData.memeId);
+  }
+};
+
+const handleSubmit = ($event) => {
+  if ($event.keyCode === 13 && !$event.shiftKey) {
+    if (showSubmitButton) {
+      $event.preventDefault();
+      submit();
+    }
   }
 };
 
