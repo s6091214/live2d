@@ -30,26 +30,20 @@
             class="p-[0.5rem] inline-block cursor-pointer"
             @click="pressLike"
           >
-            <img
-              class="w-[24px] h-[24px]"
-              :class="{
-                grayscale: !isLike(postData.memeId),
-              }"
-              src="../../public/heart-like-con.svg"
-              alt=""
+            <SvgIcon
+              name="icon-like"
+              :cssClass="`w-[24px] h-[24px] ${
+                !isLike(postData.memeId) ? 'grayscale' : ''
+              }`"
             />
           </span>
           <!-- 留言 -->
           <el-button
-            v-if="!isHome"
+            v-show="!isHome"
             @click="handleComment"
             @mouseover="($event) => emit('showTooltip', $event.currentTarget)"
           >
-            <img
-              class="w-[24px] h-[24px] invert"
-              src="../../public/comment-icon.svg"
-              alt=""
-            />
+            <SvgIcon name="icon-comment" cssClass="w-[24px] h-[24px] invert" />
           </el-button>
         </div>
       </div>

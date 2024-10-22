@@ -33,6 +33,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   nuxtApp.vueApp.component(key, component);
 }
 
+import "virtual:svg-icons-register";
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 import deviceName from "../util/mobileDetective";
 

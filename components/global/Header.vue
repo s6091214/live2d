@@ -32,7 +32,10 @@
           v-show="deviceName === 'unknown' || page.diveice === 'all'"
         >
           <span class="font-pop hidden sm:inline-block">{{ page.name }}</span>
-          <img class="sm:hidden w-[30px]" :src="`/${page.icon}`" alt="icon" />
+          <SvgIcon
+            :name="`${page.icon}`"
+            cssClass="sm:hidden w-[30px] h-[30px]"
+          />
         </NuxtLink>
       </li>
     </ul>
@@ -140,19 +143,19 @@ const routeList = reactive([
     href: "/",
     name: "首頁",
     diveice: "pc",
-    icon: "home.svg",
+    icon: "icon-home",
   },
   {
     href: "/PersonSpace",
     name: "個人空間",
     diveice: "all",
-    icon: "space.svg",
+    icon: "icon-space",
   },
   {
     href: "/HotMeme",
     name: "熱門迷因",
     diveice: "all",
-    icon: "hot.svg",
+    icon: "icon-hot",
   },
 ]);
 
