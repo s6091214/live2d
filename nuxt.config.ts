@@ -1,8 +1,9 @@
+import type { NuxtConfig } from "nuxt/schema";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import path from "path";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
+const config: NuxtConfig = {
   app: {
     head: {
       viewport: "width=device-width,initial-scale=1.0",
@@ -83,5 +84,19 @@ export default defineNuxtConfig({
         customDomId: "__svg__icons__dom__",
       }),
     ],
+    server: {
+      proxy: {},
+    },
   },
-});
+};
+
+if (process.env.NODE_ENV === "development") {
+  config.vite.server.proxy = {
+    "/api": {
+      target: "https://postgresql-912342912109.asia-east1.run.app/",
+      changeOrigin: true,
+    },
+  };
+}
+
+export default defineNuxtConfig(config);
