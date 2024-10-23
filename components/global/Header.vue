@@ -29,7 +29,7 @@
           :class="[
             `${page.href === onRoutes ? 'text-yellow-500' : 'text-white'}`,
           ]"
-          v-show="deviceName === 'unknown' || page.diveice === 'all'"
+          v-show="deviceName === 'unknown' || page.device === 'all'"
         >
           <span class="font-pop hidden sm:inline-block">{{ page.name }}</span>
           <SvgIcon
@@ -142,19 +142,19 @@ const routeList = reactive([
   {
     href: "/",
     name: "首頁",
-    diveice: "pc",
+    device: "pc",
     icon: "icon-home",
   },
   {
     href: "/PersonSpace",
     name: "個人空間",
-    diveice: "all",
+    device: "all",
     icon: "icon-space",
   },
   {
     href: "/HotMeme",
     name: "熱門迷因",
-    diveice: "all",
+    device: "all",
     icon: "icon-hot",
   },
 ]);

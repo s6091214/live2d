@@ -13,11 +13,17 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const memeStore = useMemeStore();
 const { memeList, hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
 const { isLogin } = storeToRefs(userStore);
+
+const router = useRouter();
 
 const filterLikes = computed(() => {
   let resultArray = [];
@@ -53,6 +59,12 @@ const filterLikes = computed(() => {
     return [...uniqueByMemeId];
   }
   return resultArray;
+});
+
+watch(isLogin, async (status) => {
+  if (!status) {
+    router.push({ path: "/" });
+  }
 });
 </script>
 
