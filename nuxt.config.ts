@@ -90,13 +90,4 @@ const config: NuxtConfig = {
   },
 };
 
-if (process.env.NODE_ENV === "development") {
-  config.vite.server.proxy = {
-    "/api": {
-      target: "https://postgresql-912342912109.asia-east1.run.app/",
-      changeOrigin: true,
-    },
-  };
-}
-
 export default defineNuxtConfig(config);
