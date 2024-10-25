@@ -32,8 +32,11 @@ export const useMemeStore = defineStore("meme", () => {
   };
 
   const setMemeList = (list) => {
-    if (list && list.length) {
-      memes.value = list;
+    if (list && Array.isArray(list)) {
+      if (memes.value.length) {
+        const newList = memes.value.concat(list);
+        memes.value = newList;
+      } else memes.value = list;
     }
   };
 

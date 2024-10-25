@@ -2,7 +2,7 @@
   <div class="relative">
     <div class="w-full home-bg min-h-screen">
       <div
-        class="mx-auto w-full px-2 sm:px-0 sm:max-w-[630px] pt-4 md:pt-[4rem] pb-[20px] relative z-10 min-h-screen"
+        class="mx-auto w-full px-2 overflow-x-hidden sm:px-0 sm:max-w-[630px] pt-4 md:pt-[4rem] pb-[20px] relative z-10 min-h-screen"
       >
         <!-- TODO: 文章列表 -->
         <PostComponent
@@ -34,6 +34,7 @@
             <span>創建暱稱或Google 登入即可留言</span>
           </template>
         </el-tooltip>
+        <loadRef />
       </div>
     </div>
   </div>
@@ -41,6 +42,7 @@
 
 <script lang="ts" setup>
 import deviceName from "../util/mobileDetective";
+import loadRef from "~/components/loadRef.vue";
 
 const initialStore = useInitialStore();
 const { setLive2dInit } = initialStore;

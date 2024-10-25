@@ -41,22 +41,10 @@
     </ul>
     <!-- TODO: 右邊操作 -->
     <div class="flex items-center">
-      <div class="hidden md:flex justify-center items-center" v-if="isHome">
-        <button class="btn-reset pr-2" @click="memeRefesh(true)">
-          重置迷因
-        </button>
-        <button
-          type="button"
-          class="btn-reset pr-2 text-3xl flex justify-center items-center"
-          @click="memeRefesh(false)"
-        >
-          <el-icon
-            :class="memeRefreshing ? 'animate-spin' : ''"
-            style="animation-iteration-count: 1"
-            ><RefreshRight
-          /></el-icon>
-        </button>
-      </div>
+      <div
+        class="hidden md:flex justify-center items-center"
+        v-if="isHome"
+      ></div>
       <div v-if="!isLogin">
         <button
           class="hidden md:inline-block p-0 bg-transparent border-none focus:outline-none"
@@ -104,13 +92,10 @@
 
 <script lang="ts" setup>
 import deviceName from "../../util/mobileDetective";
-import randomNumber from "~/util/randomNumber";
 
 const props = defineProps({
   scrollOver: Boolean,
 });
-
-const { getMemeList } = useMemeList();
 
 const userStore = useUserStore();
 const { setNickname, setUserInfo, logoutFromGoogle } = userStore;
@@ -158,16 +143,6 @@ const routeList = reactive([
     icon: "icon-hot",
   },
 ]);
-
-const memeRefreshing = ref(false);
-
-const memeRefesh = (reset: boolean) => {
-  if (!reset) memeRefreshing.value = true;
-  const page = reset ? 1 : randomNumber(1, 10);
-  getMemeList(page).then((res) => {
-    if (!reset) memeRefreshing.value = false;
-  });
-};
 
 const logout = () => {
   setNickname("");

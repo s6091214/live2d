@@ -54,7 +54,7 @@ const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
 const { likeIdList, hotMemesList } = storeToRefs(memeStore);
-const { savaLikeIdList } = memeStore;
+const { savaLikeIdList, setMemeList } = memeStore;
 
 const userStore = useUserStore();
 const { googleUid } = storeToRefs(userStore);
@@ -114,6 +114,27 @@ onMounted(() => {
     const overHeigth = window.scrollY > 200;
     setScrollOver(overHeigth);
   });
+});
+
+const resetLocalStorage = () => {
+  localStorage.setItem("memePage", "1");
+};
+
+const handleBeforeUnload = (event) => {
+  event.preventDefault();
+  resetLocalStorage();
+  setMemeList([]);
+  return (event.returnValue = "");
+};
+
+onMounted(() => {
+  // 監聽 beforeunload 事件
+  window.addEventListener("beforeunload", handleBeforeUnload);
+});
+
+onUnmounted(() => {
+  // 移除 beforeunload 事件監聽
+  window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 </script>
 

@@ -6,7 +6,12 @@ interface ApiResponse {
 
 function dataFormater(list) {
   let newList = [];
-  const filterString = ["免費救援", "免費援助", "柯文哲被押"];
+  const filterString = [
+    "免費救援",
+    "免費援助",
+    "柯文哲被押",
+    "Xem đá gà trực tiếp tại thomo hôm nay",
+  ];
   if (list.length) {
     newList = list.filter((content) => {
       let show = true;
@@ -41,28 +46,55 @@ function dataFormater(list) {
 }
 
 export function useMemeList() {
+  const initialStore = useInitialStore();
+  const { setLoading } = initialStore;
+  const { globalLoading } = storeToRefs(initialStore);
+
   const memeStore = useMemeStore();
   const { setMemeList } = memeStore;
 
-  const memePage = ref(0);
+  const memePage = ref(1);
 
-  const getMemeList = (page: number = 1) => {
+  const getMemeList = () => {
     return new Promise(async (resolve) => {
-      if (memePage.value === page) return resolve(false);
-      memePage.value = page;
       const { data: memes } = await useAsyncData<ApiResponse>(
         "getMemeList",
-        () => $fetch(`https://memes.tw/wtf/api?page=${page}`)
+        () => $fetch(`https://memes.tw/wtf/api?page=${memePage.value}`)
       );
       if (memes.value) {
         const formater = dataFormater(memes.value);
         setMemeList(formater);
+        if (import.meta.client) {
+          localStorage.setItem("memePage", memePage.value.toString());
+        }
       }
       resolve(true);
     });
   };
 
+  const addMemePage = async () => {
+    if (globalLoading.value || memePage.value >= 5) return;
+    setLoading(true);
+    memePage.value += 1;
+    await getMemeList();
+    setLoading(false);
+  };
+
+  onMounted(() => {
+    const storeMemePage = localStorage.getItem("memePage");
+    if (storeMemePage) {
+      try {
+        memePage.value = Number(storeMemePage);
+      } catch (error) {
+        memePage.value = 1;
+        setMemeList([]);
+      }
+    }
+  });
+
   return {
+    memePage,
     getMemeList,
+    addMemePage,
   };
 }
