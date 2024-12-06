@@ -11,6 +11,7 @@ function dataFormater(list) {
     "免費援助",
     "柯文哲被押",
     "Xem đá gà trực tiếp tại thomo hôm nay",
+    "山東號、羅斯福號",
   ];
   if (list.length) {
     newList = list.filter((content) => {
@@ -51,7 +52,7 @@ export function useMemeList() {
   const { globalLoading } = storeToRefs(initialStore);
 
   const memeStore = useMemeStore();
-  const { setMemeList } = memeStore;
+  const { setMemeList, fetchMemeData } = memeStore;
 
   const memePage = ref(1);
 
@@ -80,6 +81,10 @@ export function useMemeList() {
     setLoading(false);
   };
 
+  const getMemeFromWarehouse = async () => {
+    await fetchMemeData();
+  };
+
   onMounted(() => {
     const storeMemePage = localStorage.getItem("memePage");
     if (storeMemePage) {
@@ -96,5 +101,6 @@ export function useMemeList() {
     memePage,
     getMemeList,
     addMemePage,
+    getMemeFromWarehouse,
   };
 }

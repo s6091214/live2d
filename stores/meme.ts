@@ -1,10 +1,25 @@
 import type { MemePost } from "~/types";
+import { apiGetMemes } from "../api";
 
 export const useMemeStore = defineStore("meme", () => {
-  let memes = ref([]);
-  let hotMemes = ref([]);
+  const memes = ref<MemePost[]>([]);
+
+  const state = reactive({
+    page: 1,
+    limit: 9,
+  });
+
+  const isReposOver = ref(false); // Memes 是否 load 完成
+
+  const isLoadRepos = ref(false); // Memes 是否正在 load
 
   const memeList = computed(() => memes.value);
+
+  const addPage = () => {
+    state.page++;
+  };
+
+  const hotMemes = ref([]);
 
   const hotMemesList = computed(() => {
     const list = hotMemes.value
@@ -44,6 +59,64 @@ export const useMemeStore = defineStore("meme", () => {
     if (list && list.length) hotMemes.value = list;
   };
 
+  function dataFormater(list) {
+    let newList = [];
+    const filterString = [
+      "免費救援",
+      "免費援助",
+      "柯文哲被押",
+      "Xem đá gà trực tiếp tại thomo hôm nay",
+      "山東號、羅斯福號",
+    ];
+    if (list.length) {
+      newList = list.filter((content) => {
+        let show = true;
+        const title = content.title;
+        for (const string of filterString) {
+          if (title.includes(string)) {
+            show = false;
+            break;
+          }
+        }
+        return show;
+      });
+      const memes = newList.map((content) => {
+        const meme = {
+          ...content,
+          memeId: content.id,
+          tags: content.hashtag
+            ? content.hashtag.split(" ").map((tag, index) => ({
+                title: tag,
+                id: `meme${content.id}-tag${index}`,
+              }))
+            : [],
+          created_date: content.created_at?.date_time_string
+            ? content.created_at.date_time_string
+            : "",
+          liked_user: [],
+        };
+        return meme;
+      });
+      return memes;
+    }
+  }
+
+  const fetchMemeData = async () => {
+    if (isReposOver.value) return;
+    if (isLoadRepos.value) return;
+    isLoadRepos.value = true;
+    addPage();
+    const res = await apiGetMemes(state.page);
+    if (Array.isArray(res)) {
+      memes.value = dataFormater([...memeList.value, ...res]);
+    } else {
+      console.error("Expected an array but got:", res);
+    }
+    isLoadRepos.value = false;
+    isReposOver.value = memes.value.length < state.limit;
+    return;
+  };
+
   onMounted(() => {
     if (cookieLikeIdList?.value) {
       const cookie = cookieLikeIdList.value.toString();
@@ -65,5 +138,8 @@ export const useMemeStore = defineStore("meme", () => {
     setMemeList,
     setHotMeme,
     savaLikeIdList,
+    fetchMemeData,
+    isLoadRepos,
+    isReposOver,
   };
 });

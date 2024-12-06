@@ -1,9 +1,8 @@
 <template>
   <div
-    v-if="componentInit"
-    v-show="memePage <= 5"
     class="loading-indicator border-none pt-3"
     ref="loadingRef"
+    v-show="!isReposOver"
   >
     <SvgIcon name="icon-hot" cssClass="w-[36px] h-[36px] text-[#f97316]" />
   </div>
@@ -11,29 +10,23 @@
 
 <script setup>
 const memeStore = useMemeStore();
-const { memeList } = storeToRefs(memeStore);
-
-const { memePage, addMemePage } = useMemeList();
+const { fetchMemeData } = memeStore;
+const { isLoadRepos, isReposOver } = storeToRefs(memeStore);
 
 const { isIntersection, intersectionObserver } = useIntersectionObserver();
 
-const loadingRef = ref();
+const loadingRef = ref(null);
 
-const componentInit = ref(false);
+onMounted(() => {
+  if (loadingRef.value) {
+    intersectionObserver(loadingRef.value);
+  }
+});
 
 watch(isIntersection, (newValue) => {
   if (!newValue) return;
-  if (!memeList?.value.length) return;
-  addMemePage();
-});
-
-onMounted(() => {
-  componentInit.value = true;
-  setTimeout(() => {
-    if (loadingRef.value) {
-      intersectionObserver(loadingRef.value);
-    }
-  });
+  if (isLoadRepos.value) return;
+  fetchMemeData();
 });
 </script>
 

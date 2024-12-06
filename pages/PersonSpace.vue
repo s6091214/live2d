@@ -39,7 +39,7 @@ const filterLikes = computed(() => {
   if (likeIdList?.value) {
     if (memeList?.value) {
       additional = [...memeList.value].filter((item) => {
-        const isLike = likeIdList.value.includes(item.id);
+        const isLike = likeIdList.value.includes(item.memeId);
         return isLike;
       });
     }

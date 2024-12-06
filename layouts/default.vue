@@ -59,11 +59,9 @@ const { savaLikeIdList, setMemeList } = memeStore;
 const userStore = useUserStore();
 const { googleUid } = storeToRefs(userStore);
 
-const { getMemeList } = useMemeList();
+const { getMemeList, getMemeFromWarehouse } = useMemeList();
 const { getHotMeme } = useHotMeme();
-
-getMemeList();
-getHotMeme();
+const { getUserList } = useUser();
 
 watch(googleUid, async (uid) => {
   if (uid && uid !== "" && hotMemesList?.value.length) {
@@ -97,6 +95,11 @@ const setScrollOver = (val) => {
   scrollOver.value = val;
 };
 
+const isScrollOver = () => {
+  const overHeigth = window.scrollY > 200;
+  setScrollOver(overHeigth);
+};
+
 const openUserDialog = () => {
   handleSignDialog(true);
 };
@@ -105,15 +108,19 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-const { getUserList } = useUser();
+// getMemeList();
+useAsyncData("memeList", async () => {
+  await getMemeFromWarehouse();
+});
 
-getUserList();
+// getHotMeme();
 
-onMounted(() => {
-  window.addEventListener("scroll", () => {
-    const overHeigth = window.scrollY > 200;
-    setScrollOver(overHeigth);
-  });
+// getUserList();
+
+onMounted(async () => {
+  window.addEventListener("scroll", isScrollOver);
+  // 監聽 beforeunload 事件
+  window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 const resetLocalStorage = () => {
@@ -127,12 +134,8 @@ const handleBeforeUnload = (event) => {
   return (event.returnValue = "");
 };
 
-onMounted(() => {
-  // 監聽 beforeunload 事件
-  window.addEventListener("beforeunload", handleBeforeUnload);
-});
-
 onUnmounted(() => {
+  window.removeEventListener("scroll", isScrollOver);
   // 移除 beforeunload 事件監聽
   window.removeEventListener("beforeunload", handleBeforeUnload);
 });
