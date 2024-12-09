@@ -54,14 +54,25 @@ const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
 const { likeIdList, hotMemesList } = storeToRefs(memeStore);
-const { savaLikeIdList, setMemeList } = memeStore;
+const { savaLikeIdList } = memeStore;
 
 const userStore = useUserStore();
 const { googleUid } = storeToRefs(userStore);
 
-const { getMemeList, getMemeFromWarehouse } = useMemeList();
-const { getHotMeme } = useHotMeme();
-const { getUserList } = useUser();
+const { getMemeFromWarehouse } = useMemeList();
+const { getUsers } = useUser();
+
+useHotMeme();
+
+useAsyncData("memeList", async () => {
+  await getMemeFromWarehouse();
+  return true;
+});
+
+useAsyncData("users", async () => {
+  await getUsers();
+  return true;
+});
 
 watch(googleUid, async (uid) => {
   if (uid && uid !== "" && hotMemesList?.value.length) {
@@ -108,36 +119,12 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-// getMemeList();
-useAsyncData("memeList", async () => {
-  await getMemeFromWarehouse();
-});
-
-// getHotMeme();
-
-// getUserList();
-
 onMounted(async () => {
   window.addEventListener("scroll", isScrollOver);
-  // 監聽 beforeunload 事件
-  window.addEventListener("beforeunload", handleBeforeUnload);
 });
-
-const resetLocalStorage = () => {
-  localStorage.setItem("memePage", "1");
-};
-
-const handleBeforeUnload = (event) => {
-  event.preventDefault();
-  resetLocalStorage();
-  setMemeList([]);
-  return (event.returnValue = "");
-};
 
 onUnmounted(() => {
   window.removeEventListener("scroll", isScrollOver);
-  // 移除 beforeunload 事件監聽
-  window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 </script>
 

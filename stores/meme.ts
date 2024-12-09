@@ -1,11 +1,18 @@
 import type { MemePost } from "~/types";
-import { apiGetMemes } from "../api";
+import { apiGetMemes, createApiClient } from "../api";
 
 export const useMemeStore = defineStore("meme", () => {
+  const config = useRuntimeConfig();
+  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiClient = createApiClient(apiBaseUrl);
+
+  const initialStore = useInitialStore();
+  const { setLoading } = initialStore;
+
   const memes = ref<MemePost[]>([]);
 
   const state = reactive({
-    page: 1,
+    page: 0,
     limit: 9,
   });
 
@@ -44,15 +51,6 @@ export const useMemeStore = defineStore("meme", () => {
     else newList = payload;
     likeIdList.value = newList;
     cookieLikeIdList.value = newList.join(",");
-  };
-
-  const setMemeList = (list) => {
-    if (list && Array.isArray(list)) {
-      if (memes.value.length) {
-        const newList = memes.value.concat(list);
-        memes.value = newList;
-      } else memes.value = list;
-    }
   };
 
   const setHotMeme = (list) => {
@@ -117,6 +115,19 @@ export const useMemeStore = defineStore("meme", () => {
     return;
   };
 
+  const fetchHotMemeData = async (setload: boolean = false) => {
+    if (setload) setLoading(true);
+    try {
+      const memes = (await apiClient.getHotMemes()) as { data: MemePost[] };
+      if (memes?.data) {
+        setHotMeme(memes.data);
+      }
+    } catch (error) {
+      console.error("Error fetching memes:", error);
+    }
+    if (setload) setLoading(false);
+  };
+
   onMounted(() => {
     if (cookieLikeIdList?.value) {
       const cookie = cookieLikeIdList.value.toString();
@@ -135,10 +146,10 @@ export const useMemeStore = defineStore("meme", () => {
     memeList,
     hotMemesList,
     likeIdList,
-    setMemeList,
     setHotMeme,
     savaLikeIdList,
     fetchMemeData,
+    fetchHotMemeData,
     isLoadRepos,
     isReposOver,
   };

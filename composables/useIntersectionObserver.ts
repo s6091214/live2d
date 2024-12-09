@@ -13,7 +13,6 @@ export function useIntersectionObserver() {
     elRef.value = el;
     observer.value = new IntersectionObserver((entries) => {
       entries.forEach((item) => {
-        console.log(item);
         isIntersection.value = item.isIntersecting;
       });
     }, options);

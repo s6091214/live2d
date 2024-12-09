@@ -1,4 +1,5 @@
 import type { MemePost } from "~/types";
+import { createApiClient } from "../api";
 
 interface ApiResponse {
   data: MemePost[];
@@ -7,30 +8,22 @@ interface ApiResponse {
 export function useHotMeme() {
   const memeStore = useMemeStore();
   const { setHotMeme } = memeStore;
-
-  const initialStore = useInitialStore();
-  const { setLoading } = initialStore;
+  const { hotMemesList } = storeToRefs(memeStore);
 
   const config = useRuntimeConfig();
+  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiClient = createApiClient(apiBaseUrl);
 
-  const getHotMeme = async (setload: boolean = false) => {
-    if (setload) setLoading(true);
-    try {
-      const { data: memes } = await useAsyncData<ApiResponse>(
-        "getHotMeme",
-        () => $fetch(`${config.public.apiBaseUrl}/api/hot-meme`)
-      ).finally(() => {
-        if (setload) setLoading(false);
-      });
-      if (memes?.value?.data) {
-        setHotMeme(memes.value.data);
-      }
-    } catch (error) {
-      console.error("Error fetching memes:", error);
-    }
-  };
+  const { data: memes, refresh } = useAsyncData(
+    "getHotMeme",
+    async () => (await apiClient.getHotMemes()) as ApiResponse
+  );
+  if (memes.value?.data) {
+    setHotMeme(memes.value.data);
+  }
 
   return {
-    getHotMeme,
+    refresh,
+    hotMemesList,
   };
 }

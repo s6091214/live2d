@@ -14,11 +14,13 @@
 
 <script lang="ts" setup>
 const memeStore = useMemeStore();
+const { fetchHotMemeData } = memeStore;
 const { hotMemesList } = storeToRefs(memeStore);
 
-const { getHotMeme } = useHotMeme();
-
-getHotMeme();
+useAsyncData("hotMemeData", async () => {
+  await fetchHotMemeData();
+  return true;
+});
 </script>
 
 <style scoped></style>

@@ -146,8 +146,6 @@ const config = useRuntimeConfig();
 
 const emit = defineEmits(["showTooltip", "handleTip"]);
 
-const { getHotMeme } = useHotMeme();
-
 const initialStore = useInitialStore();
 const { handleSignDialog, addAlert } = initialStore;
 
@@ -155,7 +153,7 @@ const userStore = useUserStore();
 const { isLogin, isGoogleLogin, googleUid, userList } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
-const { savaLikeIdList } = memeStore;
+const { fetchHotMemeData, savaLikeIdList } = memeStore;
 const { hotMemesList, likeIdList } = storeToRefs(memeStore);
 
 const hotMemeIds = computed(() => {
@@ -261,7 +259,7 @@ const likeMeme = async (request) => {
     );
     console.log(res.value);
     if (res.value.success) {
-      getHotMeme();
+      fetchHotMemeData();
     }
   }
 };
@@ -328,7 +326,7 @@ const addHotMemes = async () => {
   );
 
   if (res.value) {
-    getHotMeme();
+    fetchHotMemeData();
     return;
   }
 

@@ -1,10 +1,27 @@
 import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
+import { createApiClient } from "../api";
+import { onIdTokenChanged } from "firebase/auth";
 import type { Auth } from "firebase/auth";
+import type { UserType } from "../types";
+
+interface ApiErrorResponse {
+  error?: string;
+}
+
+let unsubscribe: (() => void) | null = null;
 
 export const useUserStore = defineStore("user", () => {
+  const config = useRuntimeConfig();
+  const apiBaseUrl = config.public.apiBaseUrl;
+  const apiClient = createApiClient(apiBaseUrl);
+
+  const initialLoad = ref(true);
+
   const nickname = ref("");
 
   const cookieNickname = useCookie("nickname");
+
+  const user = ref(null as UserType | null);
 
   const userList = ref([] as UserType[]);
 
@@ -70,9 +87,64 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const fetchUsersData = async () => {
+    try {
+      const users = await apiClient.getUsers();
+      if (users) {
+        userList.value = users as UserType[];
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchCreateUser = async (userData) => {
+    try {
+      const res = (await apiClient.createUser(userData)) as ApiErrorResponse;
+
+      if (!res.error) {
+        fetchUsersData();
+      }
+    } catch (error) {
+      console.error("Failed to add user", error);
+    }
+  };
+
+  const isExist = (uid: string) => {
+    const uidList = userList.value.map((user) => user.uid);
+    if (!uidList.length || uidList.includes(uid)) {
+      return true;
+    }
+    return false;
+  };
+
   onMounted(() => {
     if (cookieNickname?.value) {
       nickname.value = cookieNickname.value;
+    }
+    if (initialLoad.value) {
+      const { $auth } = useNuxtApp();
+      initialLoad.value = false;
+      if ($auth) {
+        unsubscribe = onIdTokenChanged($auth as Auth, async (_user) => {
+          if (!_user || !_user.uid) {
+            user.value = null;
+            return;
+          }
+          const { displayName, photoURL, uid, email } = _user;
+          setNickname(displayName);
+          setUserInfo({ displayName, photoURL, uid, email });
+          if (!isExist(uid))
+            fetchCreateUser({ displayName, photoURL, uid, email });
+        });
+      }
+    }
+  });
+
+  onUnmounted(() => {
+    if (unsubscribe) {
+      unsubscribe(); // 移除監聽器
+      unsubscribe = null;
     }
   });
 
@@ -88,5 +160,6 @@ export const useUserStore = defineStore("user", () => {
     setUserList,
     loginWithGoogle,
     logoutFromGoogle,
+    fetchUsersData,
   };
 });

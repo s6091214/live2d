@@ -61,8 +61,6 @@ interface ApiResponse {
 
 const props = defineProps<{ postData: MemePost }>();
 
-const { getHotMeme } = useHotMeme();
-
 const initialStore = useInitialStore();
 const { setLoading } = initialStore;
 const { globalLoading } = storeToRefs(initialStore);
@@ -71,6 +69,7 @@ const userStore = useUserStore();
 const { nickname, userInfo, isGoogleLogin } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
+const { fetchHotMemeData } = memeStore;
 const { hotMemesList } = storeToRefs(memeStore);
 
 const config = useRuntimeConfig();
@@ -159,7 +158,7 @@ const addComment = async (memeId) => {
   if (res.value.success) {
     form.value.comment = "";
     renderHeight.value = "24px";
-    getHotMeme();
+    fetchHotMemeData();
   }
 };
 
@@ -174,7 +173,7 @@ const addHotMemes = async (requestData) => {
   if (res.value) {
     form.value.comment = "";
     renderHeight.value = "24px";
-    getHotMeme();
+    fetchHotMemeData();
   }
 
   console.log(res.value);
