@@ -154,14 +154,7 @@ const { isLogin, isGoogleLogin, googleUid, userList } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
 const { fetchHotMemeData, savaLikeIdList } = memeStore;
-const { hotMemesList, likeIdList } = storeToRefs(memeStore);
-
-const hotMemeIds = computed(() => {
-  if (hotMemesList?.value) {
-    return hotMemesList.value.map((meme) => meme.memeId);
-  }
-  return [];
-});
+const { likeIdList, hotMemeIds } = storeToRefs(memeStore);
 
 const props = defineProps<{ postData: MemePost }>();
 

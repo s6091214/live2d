@@ -41,6 +41,13 @@ export const useMemeStore = defineStore("meme", () => {
     });
   });
 
+  const hotMemeIds = computed(() => {
+    if (hotMemesList?.value?.length) {
+      return hotMemesList.value.map((meme) => meme.memeId);
+    }
+    return [];
+  });
+
   const likeIdList: Ref<number[]> = ref([]);
 
   const cookieLikeIdList = useCookie("likeIdList");
@@ -65,6 +72,9 @@ export const useMemeStore = defineStore("meme", () => {
       "柯文哲被押",
       "Xem đá gà trực tiếp tại thomo hôm nay",
       "山東號、羅斯福號",
+      "日本外送茶",
+      "日本東京約會找靜香",
+      "Maaaring i-drag",
     ];
     if (list.length) {
       newList = list.filter((content) => {
@@ -152,5 +162,6 @@ export const useMemeStore = defineStore("meme", () => {
     fetchHotMemeData,
     isLoadRepos,
     isReposOver,
+    hotMemeIds,
   };
 });

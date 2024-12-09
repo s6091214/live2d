@@ -70,7 +70,7 @@ const { nickname, userInfo, isGoogleLogin } = storeToRefs(userStore);
 
 const memeStore = useMemeStore();
 const { fetchHotMemeData } = memeStore;
-const { hotMemesList } = storeToRefs(memeStore);
+const { hotMemeIds } = storeToRefs(memeStore);
 
 const config = useRuntimeConfig();
 
@@ -117,13 +117,6 @@ const formatString = (msg) => {
   }
   return msg;
 };
-
-const hotMemeIds = computed(() => {
-  if (hotMemesList?.value) {
-    return hotMemesList.value.map((meme) => meme.memeId);
-  }
-  return [];
-});
 
 const formatCommentData = () => {
   const content = formatString(form.value.comment);

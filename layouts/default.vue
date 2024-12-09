@@ -64,11 +64,6 @@ const { getUsers } = useUser();
 
 useHotMeme();
 
-useAsyncData("memeList", async () => {
-  await getMemeFromWarehouse();
-  return true;
-});
-
 useAsyncData("users", async () => {
   await getUsers();
   return true;
@@ -124,6 +119,10 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  useAsyncData("memeList", async () => {
+    await getMemeFromWarehouse();
+    return true;
+  });
   window.removeEventListener("scroll", isScrollOver);
 });
 </script>
