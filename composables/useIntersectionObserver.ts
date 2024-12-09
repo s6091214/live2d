@@ -26,7 +26,6 @@ export function useIntersectionObserver() {
   };
 
   onUnmounted(() => {
-    console.log("卸載 IntersectionObserver");
     unobserver();
   });
 

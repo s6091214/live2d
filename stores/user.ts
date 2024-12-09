@@ -17,6 +17,8 @@ export const useUserStore = defineStore("user", () => {
 
   const initialLoad = ref(true);
 
+  const authReady = ref(false);
+
   const nickname = ref("");
 
   const cookieNickname = useCookie("nickname");
@@ -118,7 +120,12 @@ export const useUserStore = defineStore("user", () => {
     return false;
   };
 
-  onMounted(() => {
+  const initializeAuth = async () => {
+    const { $auth } = useNuxtApp();
+    if (!$auth) {
+      authReady.value = true; // 如果 Firebase 未配置，直接標記完成
+      return;
+    }
     if (cookieNickname?.value) {
       nickname.value = cookieNickname.value;
     }
@@ -134,19 +141,23 @@ export const useUserStore = defineStore("user", () => {
           const { displayName, photoURL, uid, email } = _user;
           setNickname(displayName);
           setUserInfo({ displayName, photoURL, uid, email });
-          if (!isExist(uid))
+
+          if (!isExist(uid)) {
             fetchCreateUser({ displayName, photoURL, uid, email });
+          }
         });
+
+        authReady.value = true;
       }
     }
-  });
+  };
 
-  onUnmounted(() => {
+  const cleanup = () => {
     if (unsubscribe) {
-      unsubscribe(); // 移除監聽器
+      unsubscribe();
       unsubscribe = null;
     }
-  });
+  };
 
   return {
     nickname,
@@ -155,11 +166,14 @@ export const useUserStore = defineStore("user", () => {
     isGoogleLogin,
     googleUid,
     userList,
+    authReady,
     setUserInfo,
     setNickname,
     setUserList,
     loginWithGoogle,
     logoutFromGoogle,
     fetchUsersData,
+    cleanup,
+    initializeAuth,
   };
 });

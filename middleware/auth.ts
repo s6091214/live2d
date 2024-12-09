@@ -7,19 +7,21 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { handleSignDialog, addAlert } = initialStore;
 
   const userStore = useUserStore();
-  const { isLogin } = storeToRefs(userStore);
+  const { initializeAuth } = userStore;
+  const { isLogin, authReady } = storeToRefs(userStore);
 
-  const nicknameCookie = useCookie("nickname");
-  const nickname = nicknameCookie.value;
+  if (!authReady.value) {
+    initializeAuth();
+  }
 
-  if (!isLogin.value) {
-    if (deviceName === "unknown" && !nickname) {
+  if (!isLogin.value && authReady.value) {
+    if (deviceName === "unknown") {
       addAlert({ type: "error", msg: "請先創建暱稱" });
       handleSignDialog(true);
       if (from && from.fullPath !== to.fullPath) {
         return navigateTo(from.fullPath || "/");
       }
-    } else if (!nickname) {
+    } else {
       return navigateTo("/login");
     }
   }

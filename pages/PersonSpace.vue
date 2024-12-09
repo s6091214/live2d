@@ -25,6 +25,12 @@ const { isLogin } = storeToRefs(userStore);
 
 const router = useRouter();
 
+watch(isLogin, async (status) => {
+  if (!status) {
+    router.push({ path: "/" });
+  }
+});
+
 const filterLikes = computed(() => {
   let resultArray = [];
   let additional = [];
@@ -59,12 +65,6 @@ const filterLikes = computed(() => {
     return [...uniqueByMemeId];
   }
   return resultArray;
-});
-
-watch(isLogin, async (status) => {
-  if (!status) {
-    router.push({ path: "/" });
-  }
 });
 </script>
 

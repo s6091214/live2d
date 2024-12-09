@@ -57,6 +57,7 @@ const { likeIdList, hotMemesList } = storeToRefs(memeStore);
 const { savaLikeIdList } = memeStore;
 
 const userStore = useUserStore();
+const { cleanup } = userStore;
 const { googleUid } = storeToRefs(userStore);
 
 const { getMemeFromWarehouse } = useMemeList();
@@ -115,14 +116,15 @@ const closeUserDialog = () => {
 };
 
 onMounted(async () => {
-  window.addEventListener("scroll", isScrollOver);
-});
-
-onUnmounted(() => {
   useAsyncData("memeList", async () => {
     await getMemeFromWarehouse();
     return true;
   });
+  window.addEventListener("scroll", isScrollOver);
+});
+
+onUnmounted(() => {
+  cleanup();
   window.removeEventListener("scroll", isScrollOver);
 });
 </script>
