@@ -36,6 +36,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import "virtual:svg-icons-register";
 import SignInAndSignup from "../components/SignInAndSignup.vue";
 import deviceName from "../util/mobileDetective";
+import { createApiClient } from "../api";
 
 const loadingIcon = `
   <path class="path" d="
@@ -54,20 +55,24 @@ const { globalLoading, signDialogStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
 const { likeIdList, hotMemesList } = storeToRefs(memeStore);
-const { savaLikeIdList } = memeStore;
+const { savaLikeIdList, fetchMemeData } = memeStore;
 
 const userStore = useUserStore();
 const { cleanup } = userStore;
 const { googleUid } = storeToRefs(userStore);
 
-const { getMemeFromWarehouse } = useMemeList();
-const { getUsers } = useUser();
+const config = useRuntimeConfig();
+const apiBaseUrl = config.public.apiBaseUrl;
+const apiClient = createApiClient(apiBaseUrl);
 
 useHotMeme();
 
-useAsyncData("users", async () => {
-  await getUsers();
-  return true;
+useLazyAsyncData("users", async () => {
+  if (import.meta.client) {
+    // console.log("get users");
+    return await apiClient.getUsers();
+  }
+  return null;
 });
 
 watch(googleUid, async (uid) => {
@@ -115,11 +120,13 @@ const closeUserDialog = () => {
   handleSignDialog(false);
 };
 
-onMounted(async () => {
-  useAsyncData("memeList", async () => {
-    await getMemeFromWarehouse();
-    return true;
-  });
+useAsyncData("memeList", async () => {
+  // console.log("get memeList");
+  await fetchMemeData();
+  return true;
+});
+
+onMounted(() => {
   window.addEventListener("scroll", isScrollOver);
 });
 

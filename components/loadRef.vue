@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const memeStore = useMemeStore();
 const { fetchMemeData } = memeStore;
 const { isLoadRepos, isReposOver } = storeToRefs(memeStore);

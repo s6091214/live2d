@@ -1,19 +1,17 @@
 export const useInitialStore = defineStore("initial", () => {
-  const alerts = ref([])
+  const alerts = ref([]);
 
-  const loading = ref(false)
+  const globalLoading = ref(false);
 
-  const signDialog = ref(false)
+  const signDialog = ref(false);
 
-  const globalLoading = computed(() => loading.value)
+  const signDialogStatus = computed(() => signDialog.value);
 
-  const signDialogStatus = computed(() => signDialog.value)
-
-  const live2dInitStatus = ref(false)
+  const live2dInitStatus = ref(false);
 
   const setLive2dInit = (value: boolean) => {
-    live2dInitStatus.value = value
-  }
+    live2dInitStatus.value = value;
+  };
 
   const addAlert = ({ msg, type }) => {
     const vm = this;
@@ -25,17 +23,24 @@ export const useInitialStore = defineStore("initial", () => {
     setTimeout(() => {
       alerts.value.pop();
     }, time);
-  }
+  };
 
   const setLoading = (payload: boolean) => {
-    loading.value = payload
-  }
+    globalLoading.value = payload;
+  };
 
   const handleSignDialog = (payload: boolean) => {
-    signDialog.value = payload
-  }
+    signDialog.value = payload;
+  };
 
   return {
-    alerts, globalLoading, signDialogStatus, live2dInitStatus, setLoading, handleSignDialog, addAlert, setLive2dInit
-  }
-})
+    alerts,
+    globalLoading,
+    signDialogStatus,
+    live2dInitStatus,
+    setLoading,
+    handleSignDialog,
+    addAlert,
+    setLive2dInit,
+  };
+});
