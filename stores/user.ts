@@ -90,13 +90,15 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const fetchUsersData = async () => {
-    try {
-      const users = await apiClient.getUsers();
-      if (users) {
-        userList.value = users as UserType[];
+    if (import.meta.client) {
+      try {
+        const users = await apiClient.getUsers();
+        if (users) {
+          userList.value = users as UserType[];
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
     }
   };
 

@@ -17,9 +17,13 @@ const memeStore = useMemeStore();
 const { fetchHotMemeData } = memeStore;
 const { hotMemesList } = storeToRefs(memeStore);
 
-useAsyncData("hotMemeData", async () => {
+const initialStore = useInitialStore();
+const { setLoading } = initialStore;
+
+onMounted(async () => {
+  setLoading(true);
   await fetchHotMemeData();
-  return true;
+  setLoading(false);
 });
 </script>
 

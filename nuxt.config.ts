@@ -86,6 +86,9 @@ const config: NuxtConfig = {
     ],
     server: {
       proxy: {},
+      watch: {
+        usePolling: true,
+      },
     },
   },
 };

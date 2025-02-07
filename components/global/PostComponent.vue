@@ -250,7 +250,7 @@ const likeMeme = async (request) => {
           body: { uid: googleUid.value },
         })
     );
-    console.log(res.value);
+    // console.log(res.value);
     if (res.value.success) {
       fetchHotMemeData();
     }

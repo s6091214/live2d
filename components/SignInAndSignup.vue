@@ -135,7 +135,7 @@
                 type="danger"
                 native-type="submit"
                 class="w-[120px] mt-4"
-                :disabled="globalLoading"
+                :disabled="globalLoading ?? false"
               >
                 創建暱稱
               </el-button>
@@ -147,7 +147,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import deviceName from "../util/mobileDetective";
 
 const userStore = useUserStore();

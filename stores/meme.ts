@@ -125,8 +125,7 @@ export const useMemeStore = defineStore("meme", () => {
     return;
   };
 
-  const fetchHotMemeData = async (setload: boolean = false) => {
-    if (setload) setLoading(true);
+  const fetchHotMemeData = async () => {
     try {
       const memes = (await apiClient.getHotMemes()) as { data: MemePost[] };
       if (memes?.data) {
@@ -135,7 +134,6 @@ export const useMemeStore = defineStore("meme", () => {
     } catch (error) {
       console.error("Error fetching memes:", error);
     }
-    if (setload) setLoading(false);
   };
 
   onMounted(() => {

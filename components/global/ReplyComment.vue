@@ -30,7 +30,7 @@
         type="primary"
         native-type="submit"
         size="small"
-        :disabled="globalLoading"
+        :disabled="globalLoading ?? false"
         v-if="showSubmitButton"
       >
         發布
@@ -169,7 +169,7 @@ const addHotMemes = async (requestData) => {
     fetchHotMemeData();
   }
 
-  console.log(res.value);
+  // console.log(res.value);
 
   if (res.value === null) {
     addComment(requestData.memeId);
