@@ -10,9 +10,9 @@
     <h1 class="font-bold py-1 pr-3 text-[0px]">
       <router-link
         to="/"
-        class="w-full h-full text-white text-4xl hover:text-white"
+        class="w-full h-full text-white text-2xl hover:text-white flex items-center"
       >
-        <span class="hidden xl:block">MEME Talk</span>
+        <span class="hidden xl:block">MEME Talk – 迷因聊天社群</span>
         <img
           src="/logo.png"
           alt="logo"

@@ -43,6 +43,23 @@
 <script lang="ts" setup>
 import loadRef from "~/components/loadRef.vue";
 
+useHead({
+  title: "迷因聊天, MEMETALK",
+  meta: [
+    {
+      name: "description",
+      content:
+        "加入 MEMETALK 社群，與全球迷因愛好者一起留言互動、點讚與收藏熱門貼文。",
+    },
+    { property: "og:title", content: "迷因聊天, MEMETALK" },
+    {
+      property: "og:description",
+      content:
+        "加入 MEMETALK 社群，與全球迷因愛好者一起留言互動、點讚與收藏熱門貼文。",
+    },
+  ],
+});
+
 const initialStore = useInitialStore();
 const { setLive2dInit } = initialStore;
 const { live2dInitStatus } = storeToRefs(initialStore);

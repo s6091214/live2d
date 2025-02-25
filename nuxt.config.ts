@@ -11,17 +11,46 @@ const config: NuxtConfig = {
       meta: [
         {
           name: "description",
-          content: "迷因、社群、貼文、留言、點讚和收藏",
+          content:
+            "加入 MEMETALK 社群，與全球迷因愛好者一起留言互動、點讚與收藏熱門貼文。",
         },
-        { property: "og:title", content: "MEMETALK 用迷因來聊天的社群" },
-        { property: "og:url", content: "http://localhost:9527/" },
+        { property: "og:title", content: "迷因聊天, MEMETALK" },
+        { property: "og:url", content: "https://live2d-two.vercel.app/" },
         {
           property: "og:description",
-          content: "MEMES, SNS, Post, COMMENTS, LIKE and COLLECT",
+          content:
+            "加入 MEMETALK 社群，與全球迷因愛好者一起留言互動、點讚與收藏熱門貼文。",
+        },
+        {
+          property: "og:image",
+          content: "https://live2d-two.vercel.app/og-image.png",
         },
         {
           name: "google-site-verification",
           content: "9SF0DnY0VkwDUx0m43hTCwoEDRdIhlaDiW8IhREz6xw",
+        },
+      ],
+      link: [
+        {
+          rel: "canonical",
+          href: "https://live2d-two.vercel.app/",
+        },
+      ],
+      script: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            url: "https://live2d-two.vercel.app/",
+            name: "MEMETALK",
+            potentialAction: {
+              "@type": "SearchAction",
+              target:
+                "https://live2d-two.vercel.app/search?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          }),
         },
       ],
     },
