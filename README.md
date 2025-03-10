@@ -23,5 +23,12 @@ yarn dev
 # bun
 bun run dev
 ```
-version：v0910
+## License
+live2D 動態形象引用
+
+This project also uses third-party libraries under MIT License, including:
+
+- [OhMyLive2D](https://github.com/hacxy/l2d) - MIT License
+
+version：v0311
 Check out the [DEMO](https://live2d-two.vercel.app/) for more information.

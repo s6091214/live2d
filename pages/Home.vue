@@ -41,6 +41,7 @@
 </template>
 
 <script lang="ts" setup>
+import deviceName from "~/util/mobileDetective";
 import loadRef from "~/components/loadRef.vue";
 
 useHead({
@@ -98,7 +99,7 @@ const live2dInit = () => {
     OML2D.loadOml2d({
       models: [
         {
-          path: "https://model.oml2d.com/cat-black/model.json",
+          path: "https://model.hacxy.cn/cat-black/model.json",
           scale: 0.15,
           position: [0, 20],
           stageStyle: {
@@ -132,7 +133,7 @@ const live2dInit = () => {
             icon: "icon-about",
             title: "gtihub",
             onClick() {
-              window.open("https://github.com/s6091214/live2d");
+              window.open("https://github.com/hacxy/l2d");
             },
           },
         ],
@@ -156,19 +157,19 @@ const live2dHandler = () => {
   }
 };
 
-// if (deviceName === "unknown") {
-//   useHead({
-//     script: [
-//       {
-//         src: "https://unpkg.com/oh-my-live2d@latest",
-//         async: true,
-//         onload: () => {
-//           live2dHandler();
-//         },
-//       },
-//     ],
-//   });
-// }
+if (deviceName === "unknown") {
+  useHead({
+    script: [
+      {
+        src: "/oh-my-live2d.min.js",
+        async: true,
+        onload: () => {
+          live2dHandler();
+        },
+      },
+    ],
+  });
+}
 </script>
 
 <style scoped>
