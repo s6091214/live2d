@@ -6,7 +6,7 @@
       >
         <!-- TODO: 文章列表 -->
         <PostComponent
-          v-for="content in memeList"
+          v-for="content in formatMemeArray"
           :key="content.memeId"
           :postData="content"
           @showTooltip="(target) => (buttonRef = target)"
@@ -66,7 +66,8 @@ const { setLive2dInit } = initialStore;
 const { live2dInitStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
-const { memeList } = storeToRefs(memeStore);
+const { memeList, formatMemeArray } = storeToRefs(memeStore);
+const { fetchInhibitWords } = memeStore;
 
 const userStore = useUserStore();
 const { isLogin } = storeToRefs(userStore);
@@ -157,19 +158,29 @@ const live2dHandler = () => {
   }
 };
 
-if (deviceName === "unknown") {
-  useHead({
-    script: [
-      {
-        src: "/oh-my-live2d.min.js",
-        async: true,
-        onload: () => {
-          live2dHandler();
-        },
-      },
-    ],
-  });
-}
+useLazyAsyncData(
+  "inhibitWords",
+  async () => {
+    // console.log("get inhibit-words");
+    await fetchInhibitWords();
+    return true;
+  },
+  { server: false }
+);
+
+// if (deviceName === "unknown") {
+//   useHead({
+//     script: [
+//       {
+//         src: "/oh-my-live2d.min.js",
+//         async: true,
+//         onload: () => {
+//           live2dHandler();
+//         },
+//       },
+//     ],
+//   });
+// }
 </script>
 
 <style scoped>

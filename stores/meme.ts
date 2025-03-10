@@ -11,6 +11,8 @@ export const useMemeStore = defineStore("meme", () => {
 
   const memes = ref<MemePost[]>([]);
 
+  const inhibitWords = ref([]);
+
   const state = reactive({
     page: 0,
     limit: 9,
@@ -64,17 +66,49 @@ export const useMemeStore = defineStore("meme", () => {
     if (list && list.length) hotMemes.value = list;
   };
 
+  const formatMemeArray = computed(() => {
+    if (inhibitWords.value.length && memes.value.length) {
+      const memes = memeList.value.filter((meme) => {
+        let show = true;
+        const title = meme.title;
+        for (const word of inhibitWords.value) {
+          if (title.includes(word)) {
+            show = false;
+            break;
+          }
+        }
+        return show;
+      });
+      return memes.map((content) => {
+        const meme = {
+          ...content,
+          tags: content.hashtag
+            ? content.hashtag.split(" ").map((tag, index) => ({
+                title: tag,
+                id: `meme${content.memeId}-tag${index}`,
+              }))
+            : [],
+          created_date: content.created_at?.date_time_string
+            ? content.created_at.date_time_string
+            : "",
+          liked_user: [],
+        };
+        return meme;
+      });
+    }
+    return memeList.value;
+  });
+
   function dataFormater(list) {
     let newList = [];
     const filterString = [
       "免費救援",
       "免費援助",
       "柯文哲被押",
-      "Xem đá gà trực tiếp tại thomo hôm nay",
       "山東號、羅斯福號",
       "日本外送茶",
       "日本東京約會找靜香",
-      "Maaaring i-drag",
+      "台海政情室",
     ];
     if (list.length) {
       newList = list.filter((content) => {
@@ -108,6 +142,21 @@ export const useMemeStore = defineStore("meme", () => {
       return memes;
     }
   }
+
+  const fetchInhibitWords = async () => {
+    try {
+      const res = await apiClient.getInhibitWords();
+      // console.log("res", res);
+      if (Array.isArray(res)) {
+        inhibitWords.value = res.map((word) => word.word);
+      } else {
+        console.error("Expected an array but got:", res);
+      }
+      return res;
+    } catch (error) {
+      console.error("Error fetching inhibit words:", error);
+    }
+  };
 
   const fetchMemeData = async () => {
     if (isReposOver.value) return;
@@ -158,8 +207,11 @@ export const useMemeStore = defineStore("meme", () => {
     savaLikeIdList,
     fetchMemeData,
     fetchHotMemeData,
+    fetchInhibitWords,
     isLoadRepos,
     isReposOver,
     hotMemeIds,
+    inhibitWords,
+    formatMemeArray,
   };
 });

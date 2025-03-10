@@ -18,7 +18,8 @@ definePageMeta({
 });
 
 const memeStore = useMemeStore();
-const { memeList, hotMemesList, likeIdList } = storeToRefs(memeStore);
+const { memeList, hotMemesList, likeIdList, formatMemeArray } =
+  storeToRefs(memeStore);
 
 const userStore = useUserStore();
 const { isLogin } = storeToRefs(userStore);
@@ -43,8 +44,8 @@ const filterLikes = computed(() => {
   }
 
   if (likeIdList?.value) {
-    if (memeList?.value) {
-      additional = [...memeList.value].filter((item) => {
+    if (formatMemeArray?.value) {
+      additional = [...formatMemeArray.value].filter((item) => {
         const isLike = likeIdList.value.includes(item.memeId);
         return isLike;
       });

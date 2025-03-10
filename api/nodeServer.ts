@@ -9,6 +9,7 @@ export const createApiClient = (baseURL: string) => {
         method: "POST",
         body: userData,
       }),
+    getInhibitWords: () => apiFetch("/api/inhibit-words"),
     // Add more API methods here as needed
   };
 };
