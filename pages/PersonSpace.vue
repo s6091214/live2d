@@ -18,8 +18,7 @@ definePageMeta({
 });
 
 const memeStore = useMemeStore();
-const { memeList, hotMemesList, likeIdList, formatMemeArray } =
-  storeToRefs(memeStore);
+const { hotMemesList, likeIdList, formatMemeArray } = storeToRefs(memeStore);
 
 const userStore = useUserStore();
 const { isLogin } = storeToRefs(userStore);

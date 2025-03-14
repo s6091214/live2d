@@ -11,6 +11,8 @@ export const useMemeStore = defineStore("meme", () => {
 
   const memes = ref<MemePost[]>([]);
 
+  const memesFromApi = computed(() => memes.value);
+
   const inhibitWords = ref([]);
 
   const state = reactive({
@@ -21,8 +23,6 @@ export const useMemeStore = defineStore("meme", () => {
   const isReposOver = ref(false); // Memes 是否 load 完成
 
   const isLoadRepos = ref(false); // Memes 是否正在 load
-
-  const memeList = computed(() => memes.value);
 
   const addPage = () => {
     state.page++;
@@ -66,20 +66,45 @@ export const useMemeStore = defineStore("meme", () => {
     if (list && list.length) hotMemes.value = list;
   };
 
-  const formatMemeArray = computed(() => {
-    if (inhibitWords.value.length && memes.value.length) {
-      const memes = memeList.value.filter((meme) => {
-        let show = true;
-        const title = meme.title;
-        for (const word of inhibitWords.value) {
-          if (title.includes(word)) {
-            show = false;
-            break;
-          }
+  const letterRegex = /\p{L}/u;
+  const allowedRegex = /[A-Za-z\u4e00-\u9fa5]/;
+
+  // 檢查是否全為中文或英文 (包含空白)
+  function isChineseOrEnglish(meme) {
+    // 逐一檢查 title 裡的每個字元
+    for (const char of meme.title) {
+      // 如果這個字元屬於任意語言的字母
+      if (letterRegex.test(char) && !allowedRegex.test(char)) {
+        // 檢查是否為英文字母或中文（基本中文字範圍）
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function filterInhitbitWords(meme) {
+    let show = true;
+    const title = meme.title;
+
+    if (inhibitWords.value.length) {
+      for (const word of inhibitWords.value) {
+        if (title.includes(word)) {
+          show = false;
+          break;
         }
-        return show;
-      });
-      return memes.map((content) => {
+      }
+    }
+
+    return show;
+  }
+
+  const formatMemeArray = computed(() => {
+    if (memes.value.length) {
+      let result = memes.value
+        .filter(isChineseOrEnglish)
+        .filter(filterInhitbitWords);
+
+      return result.map((content) => {
         const meme = {
           ...content,
           tags: content.hashtag
@@ -96,33 +121,12 @@ export const useMemeStore = defineStore("meme", () => {
         return meme;
       });
     }
-    return memeList.value;
+    return memes.value;
   });
 
   function dataFormater(list) {
-    let newList = [];
-    const filterString = [
-      "免費救援",
-      "免費援助",
-      "柯文哲被押",
-      "山東號、羅斯福號",
-      "日本外送茶",
-      "日本東京約會找靜香",
-      "台海政情室",
-    ];
     if (list.length) {
-      newList = list.filter((content) => {
-        let show = true;
-        const title = content.title;
-        for (const string of filterString) {
-          if (title.includes(string)) {
-            show = false;
-            break;
-          }
-        }
-        return show;
-      });
-      const memes = newList.map((content) => {
+      const memes = list.map((content) => {
         const meme = {
           ...content,
           memeId: content.id,
@@ -141,6 +145,7 @@ export const useMemeStore = defineStore("meme", () => {
       });
       return memes;
     }
+    return [];
   }
 
   const fetchInhibitWords = async () => {
@@ -165,7 +170,7 @@ export const useMemeStore = defineStore("meme", () => {
     addPage();
     const res = await apiGetMemes(state.page);
     if (Array.isArray(res)) {
-      memes.value = dataFormater([...memeList.value, ...res]);
+      memes.value = dataFormater([...memes.value, ...res]);
     } else {
       console.error("Expected an array but got:", res);
     }
@@ -200,7 +205,7 @@ export const useMemeStore = defineStore("meme", () => {
   });
 
   return {
-    memeList,
+    memesFromApi,
     hotMemesList,
     likeIdList,
     setHotMeme,

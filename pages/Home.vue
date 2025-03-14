@@ -66,7 +66,7 @@ const { setLive2dInit } = initialStore;
 const { live2dInitStatus } = storeToRefs(initialStore);
 
 const memeStore = useMemeStore();
-const { memeList, formatMemeArray } = storeToRefs(memeStore);
+const { formatMemeArray } = storeToRefs(memeStore);
 const { fetchInhibitWords } = memeStore;
 
 const userStore = useUserStore();
@@ -168,19 +168,19 @@ useLazyAsyncData(
   { server: false }
 );
 
-// if (deviceName === "unknown") {
-//   useHead({
-//     script: [
-//       {
-//         src: "/oh-my-live2d.min.js",
-//         async: true,
-//         onload: () => {
-//           live2dHandler();
-//         },
-//       },
-//     ],
-//   });
-// }
+if (deviceName === "unknown") {
+  useHead({
+    script: [
+      {
+        src: "/oh-my-live2d.min.js",
+        async: true,
+        onload: () => {
+          live2dHandler();
+        },
+      },
+    ],
+  });
+}
 </script>
 
 <style scoped>
