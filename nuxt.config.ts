@@ -120,6 +120,15 @@ const config: NuxtConfig = {
       },
     },
   },
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "https://postgresql-prisma-912342912109.asia-east1.run.app",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    } as any,
+  },
 };
 
 export default defineNuxtConfig(config);
